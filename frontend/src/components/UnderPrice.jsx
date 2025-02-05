@@ -17,7 +17,7 @@ const UnderPrice = () => {
     const fetchUnder500 = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/games/under-price/500"
+          "http://${process.env.BACKEND_URL}/api/games/under-price/500"
         );
         setUnder500(response.data);
       } catch (error) {
@@ -29,7 +29,7 @@ const UnderPrice = () => {
     const fetchUnder1000 = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/games/under-price/1000"
+          "http://${process.env.BACKEND_URL}/api/games/under-price/1000"
         );
         setUnder1000(response.data);
       } catch (error) {

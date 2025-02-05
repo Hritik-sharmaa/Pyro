@@ -32,15 +32,15 @@ const Navbar = () => {
   const fetchSuggestions = useCallback(async (query) => {
     if (!query.trim()) {
       setSuggestions([]);
-      //console.log("Clearing suggestions");
+      console.log("Clearing suggestions");
       return;
     }
     try {
       const response = await axios.get(
-        `http://localhost:3000/api/games/search`,
+        `http://${process.env.BACKEND_URL}/api/games/search`,
         { params: { q: query } }
       );
-      // console.log("Full API Response:", response.data);
+      console.log("Full API Response:", response.data);
       setSuggestions(response.data.games || []);
     } catch (error) {
       console.error("Error fetching search suggestions:", error);
@@ -158,8 +158,7 @@ const Navbar = () => {
                 {suggestions.map((game) => (
                   <li
                     key={game._id}
-                    className="p-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-3"
-                    onClick={() => navigate(`/game/${game._id}`)}>
+                    className="p-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-3">
                     <img
                       src={game.poster}
                       alt={game.name}

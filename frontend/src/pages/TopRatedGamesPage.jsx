@@ -21,7 +21,7 @@ const TopRatedGamesPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/games/top-rated`,
+        `http://${process.env.BACKEND_URL}/api/games/top-rated`,
         {
           params: {
             page: page,

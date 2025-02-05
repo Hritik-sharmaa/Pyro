@@ -67,20 +67,20 @@ app.use("/api/top-rated", topRatedGames); //for home page to show only 6 games
 app.use("/api/flash-sale", flashSale);
 app.use("/api/games/under-price", underGames);
 
+//search routes 
+app.use("/api/games/search", fetchSearchGames);
+
 //games routes
 app.use("/api/games/top-rated", fetchTopRatedGames);
 app.use("/api/games/flash-sale", fetchFlashSaleGames);
 app.use("/api/games/under-price-500", fetchUnder500Games);
 app.use("/api/games/under-price-1000", fetchUnder1000Games);
-app.use("/api/games/genre/:genre", fetchGamesByGenre);
 app.use("/api/games/browse-games", fetchBrowseGames);
+app.use("/api/games/genre/:genre", fetchGamesByGenre);
 app.use("/api/games/:gameId", fetchGameDetails);
 
 //wishlist routes
 app.use("/api/wishlist", wishlistRoute);
-
-//search routes 
-app.use("/api/games/search", fetchSearchGames);
 
 //user routes 
 app.use("/api/user", userRoute)

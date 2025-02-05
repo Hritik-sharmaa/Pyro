@@ -23,7 +23,7 @@ const GenreGamesPage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/games/genre/${genre}`,
+        `http://${process.env.BACKEND_URL}/api/games/genre/${genre}`,
         {
           params: {
             page: page,

@@ -24,7 +24,7 @@ const BrowseGames = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/games/browse-games`,
+        `http://${process.env.BACKEND_URL}/api/games/browse-games`,
         {
           params: {
             page,
@@ -116,10 +116,12 @@ const BrowseGames = () => {
                 <div className="p-4">
                   <h3 className="text-lg font-bold text-black">{game.name}</h3>
                   <p className="text-black text-sm">
-                    Original Price: ₹{game.originalPrice.toLocaleString("en-IN")}
+                    Original Price: ₹
+                    {game.originalPrice.toLocaleString("en-IN")}
                   </p>
                   <p className="text-black mt-2">
-                    Discounted Price: ₹{game.discountedPrice.toLocaleString("en-IN")}
+                    Discounted Price: ₹
+                    {game.discountedPrice.toLocaleString("en-IN")}
                   </p>
                   <Link
                     to={`/games/${game._id}`}

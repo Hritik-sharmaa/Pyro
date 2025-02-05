@@ -21,7 +21,7 @@ const Under1000Games = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:3000/api/games/under-price-1000`,
+        `http://${process.env.BACKEND_URL}/api/games/under-price-1000`,
         {
           params: {
             page: page,
@@ -90,12 +90,12 @@ const Under1000Games = () => {
             <div
               key={game._id}
               className="flex bg-white text-black p-2 rounded relative group">
-                <Link to={`/games/${game._id}`}>
-              <img
-                src={game.poster}
-                alt={game.name}
-                className="w-[21rem] rounded"
-              />
+              <Link to={`/games/${game._id}`}>
+                <img
+                  src={game.poster}
+                  alt={game.name}
+                  className="w-[21rem] rounded"
+                />
               </Link>
               <div className="m-5">
                 <h6 className="text-2xl font-bold">{game.name}</h6>

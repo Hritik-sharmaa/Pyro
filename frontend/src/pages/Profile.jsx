@@ -28,14 +28,17 @@ const Profile = () => {
           return;
         }
 
-        const response = await fetch("http://localhost:3000/api/user/profile", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-        });
+        const response = await fetch(
+          "http://${process.env.BACKEND_URL}/api/user/profile",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch user data.");
@@ -67,22 +70,26 @@ const Profile = () => {
     <div className="flex flex-col items-center text-white bg-[#0f1115] h-screen">
       <Navbar />
       <div className="flex items-center justify-center gap-4 pt-28">
-        <img src={profilePic} alt="" className="w-20"/>
+        <img src={profilePic} alt="" className="w-20" />
         <h1 className="text-3xl font-bold text-white ">Profile</h1>
       </div>
       {isAuthenticated && userData ? (
         <div className="mt-10">
           <h2 className="text-2xl flex items-center gap-2">
             <MdOutlinePerson2 />
-            <span className="font-bold">Name: </span>{userData.firstName} {userData.lastName}
+            <span className="font-bold">Name: </span>
+            {userData.firstName} {userData.lastName}
           </h2>
           <p className="text-lg flex items-center gap-2">
             <MdAlternateEmail />
-            <span className="font-bold">Email: </span>{userData.email}
+            <span className="font-bold">Email: </span>
+            {userData.email}
           </p>
           <p className="text-lg flex items-center gap-2">
             <TbLockPassword />{" "}
-            <span className="font-bold"><Link to="/forgot-password">Forgot password?</Link></span>
+            <span className="font-bold">
+              <Link to="/forgot-password">Forgot password?</Link>
+            </span>
           </p>
           <button
             className="w-full text-center text-black bg-[#DCFF1E] font-bold p-2 rounded mt-3 hover:bg-[#9ab022]"

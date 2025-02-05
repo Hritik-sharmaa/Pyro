@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import Navbar from "../components/Navbar";
 import { IoCartOutline } from "react-icons/io5";
 import { PiTrashSimple } from "react-icons/pi";
-import "../styles/Common.css"
+import "../styles/Common.css";
 
 const WishlistPage = () => {
   const { userId, isAuthenticated, isCheckingAuth, setWishlistCount } =
@@ -32,7 +32,7 @@ const WishlistPage = () => {
         try {
           console.log("Fetching wishlist...");
           const response = await axios.get(
-            `http://localhost:3000/api/wishlist/${userId}`
+            `http://${process.env.BACKEND_URL}/api/wishlist/${userId}`
           );
           console.log("API response:", response.data);
           setWishlist(response.data.games || []);
@@ -60,7 +60,7 @@ const WishlistPage = () => {
 
     try {
       await axios.delete(
-        `http://localhost:3000/api/wishlist/remove/${userId}/${gameId}`
+        `http://${process.env.BACKEND_URL}/api/wishlist/remove/${userId}/${gameId}`
       );
       setWishlist((prev) => prev.filter((game) => game._id !== gameId));
       setWishlistCount(wishlist.length - 1);
@@ -128,7 +128,7 @@ const WishlistPage = () => {
                     </div>
                     {poster && (
                       <img
-                        src={`http://localhost:3000${poster}`}
+                        src={`http://${process.env.BACKEND_URL}${poster}`}
                         alt={name}
                         className="w-full h-full rounded-xl"
                       />
@@ -170,7 +170,7 @@ const WishlistPage = () => {
                       <button
                         onClick={() => handleRemoveFromWishlist(_id)}
                         className="border-red-500 border text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-500 hover:text-white transition-colors duration-300 flex gap-2">
-                        Remove <PiTrashSimple size={22}/>
+                        Remove <PiTrashSimple size={22} />
                       </button>
                     </div>
                   </div>
