@@ -32,7 +32,7 @@ const WishlistPage = () => {
         try {
           console.log("Fetching wishlist...");
           const response = await axios.get(
-            `http://${process.env.BACKEND_URL}/api/wishlist/${userId}`
+            `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/${userId}`
           );
           console.log("API response:", response.data);
           setWishlist(response.data.games || []);
@@ -60,7 +60,7 @@ const WishlistPage = () => {
 
     try {
       await axios.delete(
-        `http://${process.env.BACKEND_URL}/api/wishlist/remove/${userId}/${gameId}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/remove/${userId}/${gameId}`
       );
       setWishlist((prev) => prev.filter((game) => game._id !== gameId));
       setWishlistCount(wishlist.length - 1);
@@ -128,7 +128,7 @@ const WishlistPage = () => {
                     </div>
                     {poster && (
                       <img
-                        src={`http://${process.env.BACKEND_URL}${poster}`}
+                        src={`${import.meta.env.VITE_BACKEND_URL}${poster}`}
                         alt={name}
                         className="w-full h-full rounded-xl"
                       />

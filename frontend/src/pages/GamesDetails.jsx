@@ -18,7 +18,7 @@ const GamesDetails = () => {
     const fetchGameDetails = async () => {
       try {
         const response = await axios.get(
-          `http://${process.env.BACKEND_URL}/api/games/${gameId}`
+          `${import.meta.env.VITE_BACKEND_URL}/api/games/${gameId}`
         );
         const gameData = response.data;
 

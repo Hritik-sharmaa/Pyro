@@ -20,7 +20,7 @@ const FlashSaleGamePage = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://${process.env.BACKEND_URL}/api/games/flash-sale`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/games/flash-sale`,
         {
           params: {
             page: page,

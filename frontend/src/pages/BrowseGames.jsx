@@ -24,7 +24,7 @@ const BrowseGames = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://${process.env.BACKEND_URL}/api/games/browse-games`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/games/browse-games`,
         {
           params: {
             page,

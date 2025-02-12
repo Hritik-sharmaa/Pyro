@@ -15,7 +15,7 @@ const WishlistButton = ({ game }) => {
       const payload = { userId, gameId: game._id };
       //console.log("Adding game to wishlist:", payload);
       axios
-        .post(`http://${process.env.BACKEND_URL}/api/wishlist/add/${userId}`, {
+        .post(`${import.meta.env.VITE_BACKEND_URL}/api/wishlist/add/${userId}`, {
           gameId: game._id,
         })
 

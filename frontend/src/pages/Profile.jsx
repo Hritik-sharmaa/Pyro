@@ -29,7 +29,7 @@ const Profile = () => {
         }
 
         const response = await fetch(
-          "http://${process.env.BACKEND_URL}/api/user/profile",
+          `${import.meta.env.VITE_BACKEND_URL}/api/user/profile`,
           {
             method: "GET",
             headers: {

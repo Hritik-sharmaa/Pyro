@@ -21,7 +21,7 @@ const Under1000Games = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://${process.env.BACKEND_URL}/api/games/under-price-1000`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/games/under-price-1000`,
         {
           params: {
             page: page,
