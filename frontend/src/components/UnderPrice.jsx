@@ -21,6 +21,8 @@ const UnderPrice = () => {
         );
         setUnder500(response.data);
         //console.log("data: ", response.data)
+        console.log("Response:", response); // Check full response
+        console.log("Data:", response.data);
       } catch (error) {
         console.error("Error fetching games under ₹500:", error.message);
       }
