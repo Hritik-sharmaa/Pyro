@@ -3,6 +3,7 @@ import { Toaster } from "react-hot-toast";
 import Loading from "../components/Loading";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import HomeLoader from "../skeletonLoader/HomeLoader";
 
 const GameSlider = lazy(() => import("../components/GameSlider"));
 const TopRatedGames = lazy(() => import("../components/TopRatedGames"));
@@ -15,17 +16,21 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => setIsLoading(false), 100); 
+    setTimeout(() => setIsLoading(false), 3000);
   }, []);
 
   return (
     <div className="">
       <div className="">
         {isLoading ? (
-          <Loading />
+          <HomeLoader />
         ) : (
           <div>
-            <Toaster position="top-right" toastOptions={{ duration: 3000 }} className="z-[999]" />
+            <Toaster
+              position="top-right"
+              toastOptions={{ duration: 3000 }}
+              className="z-[999]"
+            />
             <Navbar />
 
             <Suspense fallback={<Loading />}>

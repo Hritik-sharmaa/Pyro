@@ -6,6 +6,7 @@ import { MdSort } from "react-icons/md";
 import Footer from "../components/Footer";
 import WishlistButton from "../components/WishlistButton";
 import { Link } from "react-router-dom";
+import GameCardSkeleton from "../skeletonLoader/GameCardSkeleton";
 
 const Under1000Games = () => {
   const [games, setGames] = useState([]);
@@ -31,11 +32,13 @@ const Under1000Games = () => {
           },
         }
       );
-      setGames(response.data.games);
-      setTotalGames(response.data.totalGames);
+      setTimeout(() => {
+        setGames(response.data.games);
+        setTotalGames(response.data.totalGames);
+        setLoading(false);
+      }, 3000);
     } catch (err) {
       console.error("Error fetching the under-price-500 games", err);
-    } finally {
       setLoading(false);
     }
   };
@@ -83,7 +86,7 @@ const Under1000Games = () => {
           </div>
         </div>
 
-        {loading && <div className="text-center">Loading...</div>}
+        {loading && <GameCardSkeleton/>}
 
         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-6">
           {games.map((game) => (

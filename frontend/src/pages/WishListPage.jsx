@@ -8,6 +8,8 @@ import Navbar from "../components/Navbar";
 import { IoCartOutline } from "react-icons/io5";
 import { PiTrashSimple } from "react-icons/pi";
 import "../styles/Common.css";
+import { Link } from "react-router-dom";
+import WishListLoader from "../skeletonLoader/WishListLoader";
 
 const WishlistPage = () => {
   const { userId, isAuthenticated, isCheckingAuth, setWishlistCount } =
@@ -30,16 +32,19 @@ const WishlistPage = () => {
     if (isAuthenticated && userId) {
       const fetchWishlist = async () => {
         try {
-          console.log("Fetching wishlist...");
+          //console.log("Fetching wishlist...");
           const response = await axios.get(
             `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/${userId}`
           );
-          console.log("API response:", response.data);
-          setWishlist(response.data.games || []);
-          setWishlistCount(response.data.games.length);
+          //console.log("API response:", response.data);
+
+          setTimeout(() => {
+            setWishlist(response.data.games || []);
+            setWishlistCount(response.data.games.length);
+            setLoading(false);
+          }, 3000);
         } catch (error) {
           console.error("Error fetching wishlist:", error);
-        } finally {
           setLoading(false);
         }
       };
@@ -60,7 +65,9 @@ const WishlistPage = () => {
 
     try {
       await axios.delete(
-        `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/remove/${userId}/${gameId}`
+        `${
+          import.meta.env.VITE_BACKEND_URL
+        }/api/wishlist/remove/${userId}/${gameId}`
       );
       setWishlist((prev) => prev.filter((game) => game._id !== gameId));
       setWishlistCount(wishlist.length - 1);
@@ -71,7 +78,7 @@ const WishlistPage = () => {
   };
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <WishListLoader/>;
   }
 
   return (
@@ -127,11 +134,13 @@ const WishlistPage = () => {
                       {filteredWishlist.indexOf(gameObj) + 1}
                     </div>
                     {poster && (
-                      <img
-                        src={`${import.meta.env.VITE_BACKEND_URL}${poster}`}
-                        alt={name}
-                        className="w-full h-full rounded-xl"
-                      />
+                      <Link to={`/games/${_id}`}>
+                        <img
+                          src={`${import.meta.env.VITE_BACKEND_URL}${poster}`}
+                          alt={name}
+                          className="w-full h-[11rem] rounded-xl cursor-pointer"
+                        />
+                      </Link>
                     )}
                   </div>
 
@@ -158,13 +167,13 @@ const WishlistPage = () => {
                     </div>
                     <div className="flex flex-col items-end gap-4">
                       <div className="flex gap-2 items-center text-center bg-zinc-200 p-2 rounded">
-                        <div className="text-xl font-semibold mr-2">
+                        <div className="text-lg font-semibold mr-1">
                           {discountedPrice
                             ? `₹${discountedPrice.toLocaleString()}`
                             : "Price Unavailable"}
                         </div>
-                        <button className="bg-[#0f1115] text-white px-4 py-3 rounded-lg text-sm hover:bg-black transition-colors duration-300 flex gap-2">
-                          Add to Cart <IoCartOutline size={22} />
+                        <button className="bg-[#0f1115] text-white px-4 py-3 rounded-lg text-xs hover:bg-black transition-colors duration-300 flex gap-2">
+                          Add to Cart <IoCartOutline size={20} />
                         </button>
                       </div>
                       <button

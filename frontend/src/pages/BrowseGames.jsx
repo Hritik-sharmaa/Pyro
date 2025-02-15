@@ -8,6 +8,7 @@ import { TbSortAscendingLetters } from "react-icons/tb";
 import { AiOutlineSortDescending } from "react-icons/ai";
 import WishlistButton from "../components/WishlistButton";
 import { Link } from "react-router-dom";
+import BrowseLoader from "../skeletonLoader/BrowseLoader";
 
 const BrowseGames = () => {
   const [games, setGames] = useState([]);
@@ -34,11 +35,13 @@ const BrowseGames = () => {
           },
         }
       );
-      setGames(response.data.games);
-      setTotalGames(response.data.totalGames);
+      setTimeout(() => {
+        setGames(response.data.games);
+        setTotalGames(response.data.totalGames);
+        setLoading(false);
+      }, 3000);
     } catch (err) {
       console.error("Error fetching browse games:", err);
-    } finally {
       setLoading(false);
     }
   };
@@ -98,7 +101,7 @@ const BrowseGames = () => {
         </div>
 
         {loading ? (
-          <p className="text-gray-400">Loading games...</p>
+          <BrowseLoader />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {games.map((game) => (

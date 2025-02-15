@@ -6,6 +6,7 @@ import { MdSort } from "react-icons/md";
 import Footer from "../components/Footer";
 import WishlistButton from "../components/WishlistButton";
 import { Link } from "react-router-dom";
+import GameCardSkeleton from "../skeletonLoader/GameCardSkeleton";
 
 const TopRatedGamesPage = () => {
   const [games, setGames] = useState([]);
@@ -31,13 +32,15 @@ const TopRatedGamesPage = () => {
           },
         }
       );
-      setGames(response.data.games);
-      setTotalGames(response.data.totalGames);
+      setTimeout(() => {
+        setGames(response.data.games);
+        setTotalGames(response.data.totalGames);
+        setLoading(false);
+      }, 3000);
     } catch (err) {
       console.error("Error fetching games by top rated ", err);
-    } finally {
       setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -84,7 +87,7 @@ const TopRatedGamesPage = () => {
           </div>
         </div>
 
-        {loading && <div className="text-center">Loading...</div>}
+        {loading && <GameCardSkeleton/>}
 
         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-6">
           {games.map((game) => (
