@@ -18,8 +18,19 @@ import CartPage from "./pages/CartPage";
 import WishListPage from "./pages/WishListPage";
 import Profile from "./pages/Profile";
 import GamesDetails from "./pages/GamesDetails";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/authStore";
 
 function App() {
+  const { checkAuth, isCheckingAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth(); // ✅ Check auth on app load
+  }, []);
+
+  if (isCheckingAuth) {
+    return <p>Loading...</p>; // Prevent rendering while checking auth
+  }
   return (
     <div>
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />

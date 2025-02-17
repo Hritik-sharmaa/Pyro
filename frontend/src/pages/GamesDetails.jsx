@@ -10,6 +10,8 @@ import "../styles/Common.css";
 import { toast } from "react-hot-toast";
 import { useWishlistStore } from "../store/wishlistStore";
 import { useAuthStore } from "../store/authStore";
+import { useCartStore } from "../store/cartStore";
+import GameDetailLoader from "../skeletonLoader/GameDetailLoader";
 
 const GamesDetails = () => {
   const { gameId } = useParams();
@@ -18,6 +20,7 @@ const GamesDetails = () => {
   const [error, setError] = useState("");
   const { wishlist, addToWishlist } = useWishlistStore();
   const userId = useAuthStore((state) => state.userId);
+  const { cart, addToCart } = useCartStore();
 
   const mainSliderRef = useRef(null);
   const thumbSliderRef = useRef(null);
@@ -29,25 +32,30 @@ const GamesDetails = () => {
           `${import.meta.env.VITE_BACKEND_URL}/api/games/${gameId}`
         );
         const gameData = response.data;
-
+  
         const validScreenshots = gameData.screenshots?.filter(Boolean) || [];
         const hasValidTrailer =
           gameData.trailer && gameData.trailer.trim() !== "";
-
+  
         const mediaToDisplay = hasValidTrailer
           ? [gameData.trailer, ...validScreenshots]
           : validScreenshots;
-
+  
         setGame({ ...gameData, mediaToDisplay });
-        console.log("data is: ", { ...gameData, mediaToDisplay });
+  
+        // Ensure the loading screen is shown for at least 3 seconds
+        setTimeout(() => {
+          setLoading(false);
+        }, 3000);
       } catch (err) {
         setError("Failed to load game details.");
-      } finally {
         setLoading(false);
       }
     };
+  
     fetchGameDetails();
   }, [gameId]);
+  
 
   const handleAddToWishlist = async () => {
     if (!userId) {
@@ -70,6 +78,30 @@ const GamesDetails = () => {
       toast.success("Game added to wishlist!");
     } catch (error) {
       toast.error("Failed to add to wishlist!");
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!userId) {
+      toast.error("You need to log in first!");
+      return;
+    }
+
+    if (cart.some((item) => item._id === game._id)) {
+      toast("Already in your cart!", { icon: "🛒" });
+      return;
+    }
+
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cart/add/${userId}`,
+        { gameId: game._id }
+      );
+
+      addToCart(game);
+      toast.success("Game added to cart!");
+    } catch (error) {
+      toast.error("Failed to add to cart!");
     }
   };
 
@@ -129,8 +161,7 @@ const GamesDetails = () => {
     return stars;
   };
 
-  if (loading)
-    return <div className="text-white text-center mt-10">Loading...</div>;
+  if (loading) return <GameDetailLoader />;
   if (error)
     return <div className="text-red-500 text-center mt-10">{error}</div>;
   if (!game.mediaToDisplay.length)
@@ -173,7 +204,9 @@ const GamesDetails = () => {
       <Navbar />
       <div className="container mx-auto px-10 py-32">
         <h1 className="text-5xl font-extrabold mb-2">{game.name}</h1>
-        <p className="mb-10 text-green-600 font-bold text-2xl">₹{game.discountedPrice.toLocaleString("en-IN")}</p>
+        <p className="mb-10 text-green-600 font-bold text-2xl">
+          ₹{game.discountedPrice.toLocaleString("en-IN")}
+        </p>
 
         {game.mediaToDisplay.length > 0 && (
           <div className="w-full lg:w-2/3 mx-auto mb-4">
@@ -347,7 +380,9 @@ const GamesDetails = () => {
                 <button className="mt-3 bg-[#66CC41] text-black px-36 py-5 rounded-lg font-bold transition-all hover:bg-[#387a20]">
                   Buy Now
                 </button>
-                <button className="mt-3 bg-white text-black px-36 py-5 rounded-lg font-bold transition-all hover:bg-[#dcdcdc]">
+                <button
+                  className="mt-3 bg-white text-black px-36 py-5 rounded-lg font-bold transition-all hover:bg-[#dcdcdc]"
+                  onClick={handleAddToCart}>
                   Add to cart
                 </button>
                 <button

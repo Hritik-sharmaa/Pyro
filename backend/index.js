@@ -26,6 +26,7 @@ const underGames = require("./routes/under-games");
 const wishlistRoute = require("./routes/wishlist-routes");
 const { getUserProfile } = require("./controllers/user-controller");
 const userRoute = require("./routes/user-routes");
+const cartRoute = require("./routes/cart-routes")
 
 const app = express();
 
@@ -81,6 +82,9 @@ app.use("/api/games/:gameId", fetchGameDetails);
 
 //wishlist routes
 app.use("/api/wishlist", wishlistRoute);
+
+//cart routes
+app.use("/api/cart", cartRoute);
 
 //user routes 
 app.use("/api/user", userRoute)
