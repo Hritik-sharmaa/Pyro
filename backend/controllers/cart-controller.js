@@ -49,7 +49,7 @@ const getCart = async (req, res) => {
     if (!cart || cart.items.length === 0) {
       return res.json({ games: [] });
     }
-    console.log("Cart fetched from DB:", cart);
+    //console.log("Cart fetched from DB:", cart);
 
     const games = cart.items.map((item) => ({
       id: item.gameId._id,
@@ -74,7 +74,7 @@ const removeFromCart = async (req, res) => {
   }
 
   try {
-    console.log(`Removing game ${gameId} from user ${userId}`);
+    //console.log(`Removing game ${gameId} from user ${userId}`);
 
     const cart = await Cart.findOne({ userId });
 
@@ -82,7 +82,6 @@ const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: "Cart not found" });
     }
 
-    // Convert gameId to ObjectId before removing
     const updatedCart = await Cart.findOneAndUpdate(
       { userId },
       { $pull: { items: { gameId: new mongoose.Types.ObjectId(gameId) } } },
@@ -93,16 +92,12 @@ const removeFromCart = async (req, res) => {
       return res.status(404).json({ message: "Game not found in cart" });
     }
 
-    console.log("Updated Cart:", updatedCart);
+    //console.log("Updated Cart:", updatedCart);
     res.json({ message: "Game removed successfully", cart: updatedCart });
   } catch (error) {
     console.error("Error in removeFromCart:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
-
 
 module.exports = { addToCart, getCart, removeFromCart };

@@ -12,6 +12,7 @@ import { useWishlistStore } from "../store/wishlistStore";
 import { useAuthStore } from "../store/authStore";
 import { useCartStore } from "../store/cartStore";
 import GameDetailLoader from "../skeletonLoader/GameDetailLoader";
+import CommentSection from "../components/CommentSection";
 
 const GamesDetails = () => {
   const { gameId } = useParams();
@@ -32,17 +33,17 @@ const GamesDetails = () => {
           `${import.meta.env.VITE_BACKEND_URL}/api/games/${gameId}`
         );
         const gameData = response.data;
-  
+
         const validScreenshots = gameData.screenshots?.filter(Boolean) || [];
         const hasValidTrailer =
           gameData.trailer && gameData.trailer.trim() !== "";
-  
+
         const mediaToDisplay = hasValidTrailer
           ? [gameData.trailer, ...validScreenshots]
           : validScreenshots;
-  
+
         setGame({ ...gameData, mediaToDisplay });
-  
+
         // Ensure the loading screen is shown for at least 3 seconds
         setTimeout(() => {
           setLoading(false);
@@ -52,10 +53,9 @@ const GamesDetails = () => {
         setLoading(false);
       }
     };
-  
+
     fetchGameDetails();
   }, [gameId]);
-  
 
   const handleAddToWishlist = async () => {
     if (!userId) {
@@ -77,6 +77,7 @@ const GamesDetails = () => {
       addToWishlist(game);
       toast.success("Game added to wishlist!");
     } catch (error) {
+      console.error("error adding to wihslist: ", error);
       toast.error("Failed to add to wishlist!");
     }
   };
@@ -101,6 +102,7 @@ const GamesDetails = () => {
       addToCart(game);
       toast.success("Game added to cart!");
     } catch (error) {
+      console.error("error adding to cart: ", error);
       toast.error("Failed to add to cart!");
     }
   };
@@ -395,6 +397,7 @@ const GamesDetails = () => {
               </div>
             </div>
           </div>
+          <CommentSection />
         </div>
       </div>
       <Footer />

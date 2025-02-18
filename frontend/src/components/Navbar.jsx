@@ -37,7 +37,7 @@ const Navbar = () => {
     }
     try {
       const response = await axios.get(
-        `http://${process.env.BACKEND_URL}/api/games/search`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/games/search`,
         { params: { q: query } }
       );
       console.log("Full API Response:", response.data);
