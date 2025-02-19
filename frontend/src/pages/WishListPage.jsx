@@ -16,6 +16,7 @@ const WishlistPage = () => {
     useAuthStore();
 
   const [wishlist, setWishlist] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -24,19 +25,14 @@ const WishlistPage = () => {
   }, []);
 
   useEffect(() => {
-    // console.log("isAuthenticated:", isAuthenticated);
-    // console.log("isCheckingAuth:", isCheckingAuth);
-    // console.log("userId:", userId);
     if (isCheckingAuth) return;
 
     if (isAuthenticated && userId) {
       const fetchWishlist = async () => {
         try {
-          //console.log("Fetching wishlist...");
           const response = await axios.get(
             `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/${userId}`
           );
-          //console.log("API response:", response.data);
 
           setTimeout(() => {
             setWishlist(response.data.games || []);
@@ -56,9 +52,25 @@ const WishlistPage = () => {
     }
   }, [userId, isAuthenticated, isCheckingAuth]);
 
-  const filteredWishlist = wishlist.filter((game) =>
-    game.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleAddToCart = async (gameId) => {
+    if (!userId) {
+      toast.error("You need to log in to add items to the cart.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/cart/add/${userId}`,
+        { gameId }
+      );
+
+      setCartItems((prev) => [...prev, gameId]);
+      toast.success("Game added to cart!");
+    } catch (error) {
+      console.error("Error adding game to cart:", error);
+      toast.error("Failed to add game to cart.");
+    }
+  };
 
   const handleRemoveFromWishlist = async (gameId) => {
     console.log("Deleting game:", { userId, gameId });
@@ -78,13 +90,13 @@ const WishlistPage = () => {
   };
 
   if (loading) {
-    return <WishListLoader/>;
+    return <WishListLoader />;
   }
 
   return (
     <div className="h-screen bg-[#0f1115] w-full">
       <Navbar />
-      <div className=" text-white text-center py-32">
+      <div className="text-white text-center py-32">
         <h1 className="text-4xl font-bold">Your Wishlist</h1>
         <p className="mt-3 text-lg">
           Browse your saved games and discover great deals!
@@ -111,81 +123,89 @@ const WishlistPage = () => {
       ) : (
         <div className="px-20 bg-[#0f1115] pb-10">
           <div className="space-y-6">
-            {filteredWishlist.map((gameObj) => {
-              const {
-                _id,
-                name,
-                poster,
-                released,
-                discountedPrice,
-                tags,
-                addedAt,
-              } = gameObj;
-              const gameKey = _id
-                ? _id.toString()
-                : gameObj.gameId?.toString() || Math.random();
+            {wishlist
+              .filter((game) =>
+                game.name.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map((gameObj) => {
+                const {
+                  _id,
+                  name,
+                  poster,
+                  released,
+                  discountedPrice,
+                  tags,
+                  addedAt,
+                } = gameObj;
 
-              return (
-                <div
-                  key={gameKey}
-                  className="flex items-center bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
-                  <div className="h-48 object-contain p-3 flex items-center">
-                    <div className="text-black px-3 py-2 rounded-full text-sm font-semibold">
-                      {filteredWishlist.indexOf(gameObj) + 1}
+                return (
+                  <div
+                    key={_id}
+                    className="flex items-center bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300">
+                    <div className="h-48 object-contain p-3 flex items-center">
+                      <div className="text-black px-3 py-2 rounded-full text-sm font-semibold">
+                        {wishlist.indexOf(gameObj) + 1}
+                      </div>
+                      {poster && (
+                        <Link to={`/games/${_id}`}>
+                          <img
+                            src={`${import.meta.env.VITE_BACKEND_URL}${poster}`}
+                            alt={name}
+                            className="w-full h-[11rem] rounded-xl cursor-pointer"
+                          />
+                        </Link>
+                      )}
                     </div>
-                    {poster && (
-                      <Link to={`/games/${_id}`}>
-                        <img
-                          src={`${import.meta.env.VITE_BACKEND_URL}${poster}`}
-                          alt={name}
-                          className="w-full h-[11rem] rounded-xl cursor-pointer"
-                        />
-                      </Link>
-                    )}
-                  </div>
 
-                  <div className="p-4 flex-1 text-black flex justify-between">
-                    <div className="flex flex-col justify-center items-start">
-                      <h3 className="text-xl font-semibold truncate">{name}</h3>
-                      <p className="text-sm mt-2 line-clamp-3">
-                        Released Date: {new Date(released).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm mt-2 line-clamp-3">
-                        Added Date: {new Date(addedAt).toLocaleDateString()}
-                      </p>
-                      <p className="pt-5 text-xs">
-                        {tags.length > 0
-                          ? tags.slice(0, 5).map((tag, index) => (
-                              <span
-                                key={index}
-                                className="border-2 border-zinc-400 px-2 py-1 mr-2 rounded">
-                                {tag}
-                              </span>
-                            ))
-                          : "No tags available"}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end gap-4">
-                      <div className="flex gap-2 items-center text-center bg-zinc-200 p-2 rounded">
-                        <div className="text-lg font-semibold mr-1">
-                          {discountedPrice
-                            ? `₹${discountedPrice.toLocaleString()}`
-                            : "Price Unavailable"}
+                    <div className="p-4 flex-1 text-black flex justify-between">
+                      <div className="flex flex-col justify-center items-start">
+                        <h3 className="text-xl font-semibold truncate">
+                          {name}
+                        </h3>
+                        <p className="text-sm mt-2">
+                          Released Date:{" "}
+                          {new Date(released).toLocaleDateString()}
+                        </p>
+                        <p className="text-sm mt-2">
+                          Added Date: {new Date(addedAt).toLocaleDateString()}
+                        </p>
+                        <p className="pt-5 text-xs">
+                          {tags.length > 0
+                            ? tags.slice(0, 5).map((tag, index) => (
+                                <span
+                                  key={index}
+                                  className="border-2 border-zinc-400 px-2 py-1 mr-2 rounded">
+                                  {tag}
+                                </span>
+                              ))
+                            : "No tags available"}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end gap-4">
+                        <div className="flex gap-2 items-center text-center bg-zinc-200 p-2 rounded">
+                          <div className="text-lg font-semibold mr-1">
+                            {discountedPrice
+                              ? `₹${discountedPrice.toLocaleString()}`
+                              : "Price Unavailable"}
+                          </div>
+                          <button
+                            onClick={() => handleAddToCart(_id)}
+                            className="px-4 py-3 rounded-lg text-xs transition-colors duration-300 flex gap-2 
+                              bg-[#0f1115] text-white hover:bg-black">
+                            Add to Cart
+                            <IoCartOutline size={20} />
+                          </button>
                         </div>
-                        <button className="bg-[#0f1115] text-white px-4 py-3 rounded-lg text-xs hover:bg-black transition-colors duration-300 flex gap-2">
-                          Add to Cart <IoCartOutline size={20} />
+                        <button
+                          onClick={() => handleRemoveFromWishlist(_id)}
+                          className="border-red-500 border text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-500 hover:text-white transition-colors duration-300 flex gap-2">
+                          Remove <PiTrashSimple size={22} />
                         </button>
                       </div>
-                      <button
-                        onClick={() => handleRemoveFromWishlist(_id)}
-                        className="border-red-500 border text-red-500 px-4 py-2 rounded-lg text-sm hover:bg-red-500 hover:text-white transition-colors duration-300 flex gap-2">
-                        Remove <PiTrashSimple size={22} />
-                      </button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
       )}

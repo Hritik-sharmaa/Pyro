@@ -20,6 +20,7 @@ import Profile from "./pages/Profile";
 import GamesDetails from "./pages/GamesDetails";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
+import AdminDashboard from "./pages/AdminDashboard";
 
 function App() {
   const { checkAuth, isCheckingAuth } = useAuthStore();
@@ -35,6 +36,7 @@ function App() {
     <div>
       <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
       <Routes>
+        <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/" element={<Home />} />
         <Route path="/browse-games" element={<BrowseGames />} />
         <Route path="/about-us" element={<AboutUs />} />

@@ -28,6 +28,7 @@ const { getUserProfile } = require("./controllers/user-controller");
 const userRoute = require("./routes/user-routes");
 const cartRoute = require("./routes/cart-routes");
 const commentRoute = require("./routes/comment-routes");
+const adminRoute = require("./routes/admin-routes");
 
 const app = express();
 
@@ -92,6 +93,9 @@ app.use("/api/comments", commentRoute);
 
 //user routes
 app.use("/api/user", userRoute);
+
+//admin routes
+app.use("/api/admin", adminRoute);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
