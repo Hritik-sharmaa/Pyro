@@ -6,11 +6,13 @@ import "../styles/Common.css";
 import Footer from "../components/Footer";
 import { PiTrashSimple } from "react-icons/pi";
 import WishListLoader from "../skeletonLoader/WishListLoader";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
   const { userId, checkAuth } = useAuthStore();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!userId) {
@@ -120,7 +122,9 @@ const CartPage = () => {
               </p>
             </div>
 
-            <button className="mt-4 w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold text-lg py-3 rounded-lg shadow-lg transition-all duration-300">
+            <button
+              onClick={() => navigate("/orders", { state: { cartItems } })}
+              className="mt-4 w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-semibold text-lg py-3 rounded-lg shadow-lg transition-all duration-300">
               Proceed to Checkout
             </button>
           </div>

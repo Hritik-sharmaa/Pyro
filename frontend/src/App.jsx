@@ -21,16 +21,18 @@ import GamesDetails from "./pages/GamesDetails";
 import { useEffect } from "react";
 import { useAuthStore } from "./store/authStore";
 import AdminDashboard from "./pages/AdminDashboard";
+import OrdersPage from "./pages/OrdersPage";
+import OrderConfirmed from "./pages/OrderConfirmed";
 
 function App() {
   const { checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
-    checkAuth(); // ✅ Check auth on app load
+    checkAuth();
   }, []);
 
   if (isCheckingAuth) {
-    return <p>Loading...</p>; // Prevent rendering while checking auth
+    return <p>Loading...</p>;
   }
   return (
     <div>
@@ -54,6 +56,10 @@ function App() {
         <Route path="/genre/:genre" element={<GenreGamesPage />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/games/:gameId" element={<GamesDetails />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/order-confirmed" element={<OrderConfirmed />} />
+        <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/order-confirmed" element={<OrderConfirmed />} />
       </Routes>
     </div>
   );

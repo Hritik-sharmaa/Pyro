@@ -29,6 +29,7 @@ const userRoute = require("./routes/user-routes");
 const cartRoute = require("./routes/cart-routes");
 const commentRoute = require("./routes/comment-routes");
 const adminRoute = require("./routes/admin-routes");
+const orderRoute = require("./routes/order-routes");
 
 const app = express();
 
@@ -81,6 +82,11 @@ app.use("/api/games/under-price-1000", fetchUnder1000Games);
 app.use("/api/games/browse-games", fetchBrowseGames);
 app.use("/api/games/genre/:genre", fetchGamesByGenre);
 app.use("/api/games/:gameId", fetchGameDetails);
+
+//payment routes
+// app.use("/api/orders", orderRoutes);
+// app.use("/api/payment", paymentRoutes);
+app.use("/api/orders", orderRoute);
 
 //wishlist routes
 app.use("/api/wishlist", wishlistRoute);
