@@ -24,7 +24,12 @@ const checkOut = async (req, res) => {
 
     const newOrder = new Order({
       userId,
-      games: cart.items.map((item) => item.gameId._id),
+      games: cart.items.map((item) => ({
+        _id: item.gameId._id.toString(),
+        name: item.gameId.name,
+        poster: item.gameId.poster,
+        discountedPrice: item.gameId.discountedPrice,
+      })),
       totalAmount,
       paymentMethod,
     });
@@ -44,10 +49,25 @@ const checkOut = async (req, res) => {
 
 const getUserOrder = async (req, res) => {
   try {
-    const orders = await Order.find({ userId });
+    const { userId } = req.params;
+    if (!userId) {
+      return res.status(400).json({ error: "UserId is required" });
+    }
+
+    const orders = await Order.find({ userId }).populate({
+      path: "games",
+      select: "name poster discountedPrice" 
+    })
+    .lean() 
+    .exec();
+;
+    // console.log("Orders with populated games:", JSON.stringify(orders, null, 2));
+    // console.log("orders sent to frontend: ", orders);
     res.json(orders);
   } catch (error) {
-    res.status(500).json({ error: "Error fetching orders" });
+    res
+      .status(500)
+      .json({ error: "Error fetching orders", details: error.message });
   }
 };
 
