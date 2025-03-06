@@ -130,6 +130,14 @@ const Navbar = () => {
               }`}>
               <Link to="/about-us">About Us</Link>
             </motion.li>
+            <motion.li
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              className={`cursor-pointer ${
+                location.pathname === "/free-games" ? "font-extrabold" : ""
+              }`}>
+              <Link to="/free-games">Play Games</Link>
+            </motion.li>
           </ul>
         </div>
 

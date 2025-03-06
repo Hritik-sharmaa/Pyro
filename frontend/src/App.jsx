@@ -23,6 +23,7 @@ import { useAuthStore } from "./store/authStore";
 import AdminDashboard from "./pages/AdminDashboard";
 import OrdersPage from "./pages/OrdersPage";
 import OrderConfirmed from "./pages/OrderConfirmed";
+import FreeGamePage from "./pages/FreeGamePage";
 
 function App() {
   const { checkAuth, isCheckingAuth } = useAuthStore();
@@ -60,6 +61,7 @@ function App() {
         <Route path="/order-confirmed" element={<OrderConfirmed />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/order-confirmed" element={<OrderConfirmed />} />
+        <Route path="/free-games" element={<FreeGamePage />} />
       </Routes>
     </div>
   );
