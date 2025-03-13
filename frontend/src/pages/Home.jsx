@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import HomeLoader from "../skeletonLoader/HomeLoader";
 
+
 const GameSlider = lazy(() => import("../components/GameSlider"));
 const TopRatedGames = lazy(() => import("../components/TopRatedGames"));
 const FlashSale = lazy(() => import("../components/FlashSale"));
