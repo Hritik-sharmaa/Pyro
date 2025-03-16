@@ -1,16 +1,17 @@
 import React from "react";
 import games from "../utils/FreeGameDetails";
 import Navbar from "../components/Navbar"
+import Footer from "../components/Footer"
 
 
 const FreeGamePage = () => {
   return (
-    <div className="min-h-screen bg-zinc-900 text-white">
+    <div className="min-h-screen bg-[#0f1115] text-white">
       <Navbar />
       <h1 className="text-5xl font-extrabold text-center text-red-500 mb-10 pt-32">
         Free Games 
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto pb-20">
         {games.map((game) => (
           <a
             key={game.id}
@@ -31,7 +32,9 @@ const FreeGamePage = () => {
           </a>
         ))}
       </div>
+      <Footer />
     </div>
+    
   );
 };
 

@@ -379,7 +379,8 @@ const GamesDetails = () => {
                 </p>
               </div>
               <div className="flex-col flex">
-                <button className="mt-3 bg-[#66CC41] text-black px-36 py-5 rounded-lg font-bold transition-all hover:bg-[#387a20]">
+                <button className="mt-3 bg-[#66CC41] text-black px-36 py-5 rounded-lg font-bold transition-all hover:bg-[#387a20]"
+                onClick={handleAddToCart}>
                   Buy Now
                 </button>
                 <button

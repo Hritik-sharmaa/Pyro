@@ -108,11 +108,13 @@ const BrowseGames = () => {
               <div
                 key={game._id}
                 className="relative group bg-white rounded-lg shadow-lg overflow-hidden hover:scale-105 transition-transform duration-200">
-                <img
-                  src={game.poster}
-                  alt={game.name}
-                  className="w-full h-48 object-cover"
-                />
+                <Link to={`/games/${game._id}`}>
+                  <img
+                    src={game.poster}
+                    alt={game.name}
+                    className="w-full h-48 object-cover"
+                  />
+                </Link>
 
                 <WishlistButton game={game} />
 
@@ -122,15 +124,11 @@ const BrowseGames = () => {
                     Original Price: ₹
                     {game.originalPrice.toLocaleString("en-IN")}
                   </p>
-                  <p className="text-black mt-2">
+                  <p className="text-black mt-1 text-sm">
                     Discounted Price: ₹
                     {game.discountedPrice.toLocaleString("en-IN")}
                   </p>
-                  <Link
-                    to={`/games/${game._id}`}
-                    className="block mt-4 text-[#378a19] hover:underline">
-                    View Details
-                  </Link>
+                  <p className="text-black mt-2">Rating: {game.rating}/5</p>
                 </div>
               </div>
             ))}

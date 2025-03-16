@@ -1,5 +1,6 @@
 const User = require("../model/user");
 const Game = require("../model/game");
+const Order = require("../model/order"); // Add this line
 
 //getting all user
 const getAllUsers = async (req, res) => {
@@ -79,10 +80,36 @@ const updateGamePrice = async (req, res) => {
     }
   };
 
+//getting all orders
+const getAllOrders = async (req, res) => {
+  try {
+    console.log("Fetching all orders...");
+    const orders = await Order.find()
+      .limit(100) // Limit the number of results
+      .populate({
+        path: "userId",
+        select: "firstName lastName email",
+        model: "User"
+      })
+      .populate({
+        path: "games",
+        select: "name gameId price",
+        model: "Game"
+      })
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Server error. Unable to fetch orders." });
+  }
+};
+
 module.exports = {
   getAllUsers,
   deleteUser,
   getAllGames,
   deleteGame,
-  updateGamePrice
+  updateGamePrice,
+  getAllOrders,  
 };

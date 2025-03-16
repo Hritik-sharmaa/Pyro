@@ -5,6 +5,7 @@ import "../styles/Common.css"
 const AdminDashboard = () => {
   const [users, setUsers] = useState([])
   const [games, setGames] = useState([])
+  const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState("users")
@@ -18,6 +19,7 @@ const AdminDashboard = () => {
     if (authenticated) {
       fetchUsers()
       fetchGames()
+      fetchOrders()
     }
   }, [authenticated])
 
@@ -31,21 +33,40 @@ const AdminDashboard = () => {
 
   const fetchUsers = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`)
       setUsers(response.data)
     } catch (error) {
       console.error("Error fetching users:", error)
+    } finally {
+      setLoading(false);
     }
   }
 
   const fetchGames = async () => {
     try {
+      setLoading(true);
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/games`)
       setGames(response.data)
     } catch (error) {
       console.error("Error fetching games:", error)
+    } finally {
+      setLoading(false);
     }
-    setLoading(false)
+  }
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      console.log("Fetching orders..."); // Debug log
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`);
+      console.log("Orders received:", response.data); // Debug log
+      setOrders(response.data);
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   const removeUser = async (userId) => {
@@ -273,6 +294,30 @@ const AdminDashboard = () => {
                   />
                 </svg>
                 Games
+              </button>
+              <button
+                onClick={() => setActiveTab("orders")}
+                className={`py-4 px-6 font-medium text-sm border-b-2 ${
+                  activeTab === "orders"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                } transition-colors duration-200 flex items-center`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+                Orders
               </button>
             </nav>
           </div>
@@ -592,6 +637,89 @@ const AdminDashboard = () => {
                 )}
               </div>
             )}
+
+            {/* Orders Tab Content */}
+            {activeTab === "orders" && (
+              <div>
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-2xl font-bold text-gray-800">Order Management</h2>
+                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                    {orders.length} Orders
+                  </span>
+                </div>
+
+                <div className="bg-white shadow-md rounded-lg overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Order Date
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Customer
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Games
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Total Amount
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Payment Method
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {orders.map((order) => (
+                          <tr key={order._id} className="hover:bg-gray-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              {new Date(order.createdAt).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              {/* Fix: Access user data from populated userId */}
+                              <div className="text-sm font-medium text-gray-900">
+                                {order.userId?.firstName} {order.userId?.lastName}
+                              </div>
+                              <div className="text-sm text-gray-500">{order.userId?.email}</div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="text-sm text-gray-900">
+                                {order.games.map((game) => (
+                                  <span
+                                    key={game._id}
+                                    className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mr-2 mb-1"
+                                  >
+                                    {game.name}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              ₹{order.totalAmount.toLocaleString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span
+                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                  ${
+                                    order.paymentMethod === "card"
+                                      ? "bg-green-100 text-green-800"
+                                      : order.paymentMethod === "gpay"
+                                      ? "bg-blue-100 text-blue-800"
+                                      : "bg-purple-100 text-purple-800"
+                                  }`}
+                              >
+                                {order.paymentMethod.toUpperCase()}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
@@ -606,4 +734,3 @@ const AdminDashboard = () => {
 }
 
 export default AdminDashboard
-

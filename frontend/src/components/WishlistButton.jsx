@@ -1,9 +1,9 @@
 import React from "react";
-import { FiPlusCircle } from "react-icons/fi";
 import { useWishlistStore } from "../store/wishlistStore";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-hot-toast";
 import axios from "axios";
+import { IoIosHeartEmpty } from "react-icons/io";
 
 const WishlistButton = ({ game }) => {
   const userId = useAuthStore((state) => state.userId);
@@ -38,7 +38,7 @@ const WishlistButton = ({ game }) => {
       className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 bg-black text-white p-2 rounded-full transition-opacity duration-300 z-50"
       title="Add to Wishlist"
       onClick={() => handleAddToWishlist(game)}>
-      <FiPlusCircle size={24} />
+      <IoIosHeartEmpty size={24} />
     </button>
   );
 };

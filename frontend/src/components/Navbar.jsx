@@ -164,16 +164,18 @@ const Navbar = () => {
             {suggestions && suggestions.length > 0 && (
               <ul className="absolute w-full bg-black border border-zinc-700 z-50 mt-1 rounded-lg shadow-lg max-h-60 overflow-y-auto">
                 {suggestions.map((game) => (
-                  <li
-                    key={game._id}
-                    className="p-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-3">
-                    <img
-                      src={game.poster}
-                      alt={game.name}
-                      className="w-10 h-10 object-cover rounded"
-                    />
-                    <span>{game.name}</span>
-                  </li>
+                  <Link to={`/games/${game._id}`} key={game._id}>
+                    <li
+                      key={game._id}
+                      className="p-2 hover:bg-zinc-800 cursor-pointer flex items-center gap-3">
+                      <img
+                        src={game.poster}
+                        alt={game.name}
+                        className="w-10 h-10 object-cover rounded"
+                      />
+                      <span>{game.name}</span>
+                    </li>
+                  </Link>
                 ))}
               </ul>
             )}

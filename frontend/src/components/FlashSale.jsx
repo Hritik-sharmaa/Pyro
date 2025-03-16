@@ -14,6 +14,7 @@ const FlashSale = () => {
     const fetchFlashSaleGames = async () => {
       try {
         const response = await axios.get("/api/flash-sale");
+        console.log("response: ", response.data)
 
         // Validate response format
         if (response.data && Array.isArray(response.data)) {
@@ -57,7 +58,7 @@ const FlashSale = () => {
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ amount: 0.2 }}
         className="grid grid-cols-5 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {games.map((game) => (
           <motion.div
