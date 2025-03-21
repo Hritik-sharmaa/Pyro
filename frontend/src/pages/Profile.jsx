@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/authStore";
 import Navbar from "../components/Navbar";
 import { MdOutlinePerson2, MdAlternateEmail } from "react-icons/md";
 import { TbLockPassword } from "react-icons/tb";
-import { FiShoppingCart } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import profilePic from "/profile-pic.png";
-import { User, ShoppingCart, LogOut } from "lucide-react";
+import { User, ShoppingCart, LogOut, Clock, CreditCard } from "lucide-react";
 import "../styles/Common.css";
 
 const Profile = () => {
@@ -19,7 +18,6 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    //console.log("User in useEffect:", user);
     if (!isAuthenticated || !user || !user.userId) {
       setLoading(false);
       return;
@@ -55,7 +53,6 @@ const Profile = () => {
       }
 
       const data = await response.json();
-      //console.log("User Data:", data);
       setUserData(data);
     } catch (err) {
       setError(err.message);
@@ -103,130 +100,242 @@ const Profile = () => {
   };
 
   if (loading)
-    return <div className="text-white text-center mt-10">Loading...</div>;
-  if (error)
-    return <div className="text-red-500 text-center mt-10">{error}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#0b0d11]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500"></div>
+      </div>
+    );
 
-  return (
-    <div className="flex flex-col bg-[#0b0d11] h-screen text-white font">
-      <Navbar />
-      <div className="flex h-full">
-        <div className="w-1/5 bg-black p-6 flex flex-col gap-4 text-lg font-semibold pt-28 px-14">
-          <p className="text-2xl font-extrabold mb-10">Dashboard</p>
+  if (error)
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#0b0d11]">
+        <div className="bg-red-900/30 text-red-400 p-6 rounded-lg border border-red-700">
+          <p className="text-xl font-semibold">{error}</p>
           <button
-            className={`p-3 rounded-2xl transition flex gap-3 ${
-              activeTab === "details"
-                ? "bg-zinc-900 text-white"
-                : "hover:bg-zinc-950"
-            }`}
-            onClick={() => setActiveTab("details")}>
-            <User color={activeTab === "details" ? "#db0021" : "#464649"} />
-            Profile
-          </button>
-          <button
-            className={`p-3 rounded-2xl transition flex gap-3 ${
-              activeTab === "orders"
-                ? "bg-zinc-950 text-white"
-                : "hover:bg-zinc-950"
-            }`}
-            onClick={() => setActiveTab("orders")}>
-            <ShoppingCart
-              color={activeTab === "orders" ? "#db0021" : "#464649"}
-            />
-            {userData.firstName}'s Orders
-          </button>
-          <button
-            className={`p-3 rounded-2xl transition flex gap-3 hover:bg-zinc-950
-            }`}
-            onClick={handleLogout}>
-            <LogOut color="#464649" />
-            Logout
+            onClick={() => navigate("/login")}
+            className="mt-4 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md transition-colors">
+            Back to Login
           </button>
         </div>
+      </div>
+    );
 
-        <div className="w-3/4 p-10 mt-20">
-          {activeTab === "details" && userData && (
-            <div className="bg-zinc-900 p-6 rounded-xl shadow-lg">
-              <h1 className="text-4xl font-extrabold text-red-500">
-                {userData.firstName}'s Profile
-              </h1>
-              <div className="flex items-center gap-6 mt-6">
-                <img
-                  src={profilePic}
-                  alt="Profile"
-                  className="w-32 h-32 rounded-full shadow-lg "
+  return (
+    <div className="flex flex-col bg-gradient-to-b from-[#0b0d11] to-[#121620] min-h-screen text-white font">
+      <Navbar />
+      <div className="flex flex-col md:flex-row flex-1 pt-16">
+        {/* Sidebar */}
+        <div className="w-full md:w-1/5 bg-black/50 backdrop-blur-sm p-6 md:min-h-screen">
+          <div className="sticky top-24">
+            <div className="flex items-center gap-3 mb-10">
+              <div className="h-10 w-1 bg-red-600 rounded-full"></div>
+              <h2 className="text-2xl font-extrabold">Dashboard</h2>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <button
+                className={`p-4 rounded-xl transition-all duration-300 flex items-center gap-3 ${
+                  activeTab === "details"
+                    ? "bg-gradient-to-r from-red-700/40 to-red-900/20 border-l-4 border-red-600"
+                    : "hover:bg-zinc-900/50"
+                }`}
+                onClick={() => setActiveTab("details")}>
+                <User
+                  size={20}
+                  className={
+                    activeTab === "details" ? "text-red-500" : "text-gray-500"
+                  }
                 />
-                <div>
-                  <h2 className="text-2xl flex items-center gap-2">
-                    <MdOutlinePerson2 className="text-red-500" />
-                    <span className="font-bold text-white">Name:</span>
-                    <span className="text-gray-300">
-                      {userData.firstName} {userData.lastName}
-                    </span>
-                  </h2>
-                  <p className="text-2xl flex items-center gap-2">
-                    <MdAlternateEmail className="text-red-500" />
-                    <span className="font-bold text-white">Email:</span>
-                    <span className="text-gray-300">{userData.email}</span>
-                  </p>
-                  <p className="text-xl flex items-center gap-2 mt-2">
-                    <TbLockPassword className="text-red-500" />
-                    <Link
-                      to="/forgot-password"
-                      className="font-bold underline text-blue-400 hover:text-blue-500 transition">
-                      Forgot password?
-                    </Link>
-                  </p>
+                <span className={activeTab === "details" ? "font-bold" : ""}>
+                  Profile
+                </span>
+              </button>
+
+              <button
+                className={`p-4 rounded-xl transition-all duration-300 flex items-center gap-3 ${
+                  activeTab === "orders"
+                    ? "bg-gradient-to-r from-red-700/40 to-red-900/20 border-l-4 border-red-600"
+                    : "hover:bg-zinc-900/50"
+                }`}
+                onClick={() => setActiveTab("orders")}>
+                <ShoppingCart
+                  size={20}
+                  className={
+                    activeTab === "orders" ? "text-red-500" : "text-gray-500"
+                  }
+                />
+                <span className={activeTab === "orders" ? "font-bold" : ""}>
+                  {userData?.firstName
+                    ? `${userData.firstName}'s Orders`
+                    : "Orders"}
+                </span>
+              </button>
+
+              <button
+                className="p-4 rounded-xl transition-all duration-300 flex items-center gap-3 hover:bg-zinc-900/50 mt-6 group"
+                onClick={handleLogout}>
+                <LogOut
+                  size={20}
+                  className="text-gray-500 group-hover:text-red-500 transition-colors"
+                />
+                <span className="group-hover:text-red-400 transition-colors">
+                  Logout
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex-1 p-4 md:p-8 lg:p-10">
+          {activeTab === "details" && userData && (
+            <div className="bg-black/30 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-zinc-800/50 transition-all duration-300 hover:shadow-red-900/10">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="h-8 w-2 bg-red-600 rounded-full"></div>
+                <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-red-400 bg-clip-text text-transparent">
+                  {userData.firstName}'s Profile
+                </h1>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="relative group">
+                 
+                  <img
+                    src={profilePic || "/placeholder.svg"}
+                    alt="Profile"
+                    className="relative w-32 h-32 rounded-full object-cover"
+                  />
+                </div>
+
+                <div className="space-y-4 flex-1">
+                  <div className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800/50 hover:border-red-900/30 transition-colors">
+                    <h2 className="flex items-center gap-3 text-xl md:text-2xl">
+                      <MdOutlinePerson2 className="text-red-500" size={24} />
+                      <span className="font-bold text-white">Name:</span>
+                      <span className="text-gray-300 font-medium">
+                        {userData.firstName} {userData.lastName}
+                      </span>
+                    </h2>
+                  </div>
+
+                  <div className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800/50 hover:border-red-900/30 transition-colors">
+                    <p className="flex items-center gap-3 text-xl md:text-2xl">
+                      <MdAlternateEmail className="text-red-500" size={24} />
+                      <span className="font-bold text-white">Email:</span>
+                      <span className="text-gray-300 font-medium">
+                        {userData.email}
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="bg-zinc-900/50 p-4 rounded-xl border border-zinc-800/50 hover:border-red-900/30 transition-colors">
+                    <p className="flex items-center gap-3">
+                      <TbLockPassword className="text-red-500" size={24} />
+                      <Link
+                        to="/forgot-password"
+                        className="font-medium text-blue-400 hover:text-blue-300 transition-colors">
+                        Reset your password
+                      </Link>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {activeTab === "orders" && (
-            <div className="bg-zinc-900 p-6 rounded-xl shadow-lg">
-              <h1 className="text-4xl font-extrabold text-red-500">
-                Previous Orders
-              </h1>
+            <div className="bg-black/30 backdrop-blur-sm p-6 md:p-8 rounded-2xl shadow-xl border border-zinc-800/50 transition-all duration-300 hover:shadow-red-900/10">
+              <div className="flex items-center gap-2 mb-8">
+                <div className="h-8 w-2 bg-red-600 rounded-full"></div>
+                <h1 className="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-white to-red-400 bg-clip-text text-transparent">
+                  Your Game Library
+                </h1>
+              </div>
+
               {orders?.length > 0 ? (
-                <div className="mt-6 space-y-4">
+                <div className="grid gap-6">
                   {orders.map((order, index) => (
                     <div
                       key={order._id}
-                      className="flex items-center bg-white text-black rounded-lg overflow-hidden shadow-md p-4">
-                      <span className="text-xl font-bold mr-4">
-                        {index + 1}
-                      </span>
-                      <div className="flex items-center w-full">
-                        <img
-                          src={order.games[0]?.poster}
-                          alt={order.games[0]?.name}
-                          className="w-56 h-28 object-cover rounded-lg"
-                        />
-                        <div className="ml-4 flex-1">
-                          <h2 className="text-xl font-bold">
-                            {order.games[0]?.name}
-                          </h2>
-                          <p className="text-sm text-gray-600">
-                            Purchased Date:{" "}
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </p>
+                      className="bg-zinc-900/40 rounded-xl overflow-hidden shadow-lg border border-zinc-800/50 hover:border-red-900/30 transition-all duration-300 hover:shadow-red-900/10 group">
+                      <div className="flex flex-col md:flex-row">
+                        <div className="relative md:w-56 h-48 md:h-auto overflow-hidden">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+                          <img
+                            src={order.games[0]?.poster || "/placeholder.svg"}
+                            alt={order.games[0]?.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                          />
+                          <div className="absolute bottom-2 left-2 z-20 bg-red-600/80 text-white text-xs font-bold px-2 py-1 rounded">
+                            #{index + 1}
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <p className="text-xl font-bold">
-                            ₹{order.totalAmount}
-                          </p>
-                          <p className="text-sm text-gray-600">
-                            Payment Method: {order.paymentMethod}
-                          </p>
+
+                        <div className="flex-1 p-4 md:p-6 flex flex-col justify-between">
+                          <div>
+                            <h2 className="text-xl md:text-2xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors">
+                              {order.games[0]?.name}
+                            </h2>
+
+                            <div className="flex flex-wrap gap-3 mt-3">
+                              <div className="flex items-center gap-2 bg-zinc-800/50 px-3 py-1.5 rounded-full text-sm">
+                                <Clock size={14} className="text-red-400" />
+                                <span className="text-gray-300">
+                                  {new Date(order.createdAt).toLocaleDateString(
+                                    "en-US",
+                                    {
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                    }
+                                  )}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-2 bg-zinc-800/50 px-3 py-1.5 rounded-full text-sm">
+                                <CreditCard
+                                  size={14}
+                                  className="text-red-400"
+                                />
+                                <span className="text-gray-300">
+                                  {order.paymentMethod}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mt-4 flex justify-between items-end">
+                            <Link to={`/games/${order.games[0]?._id}`}>
+                              <button className="bg-zinc-800 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors text-sm">
+                                View Details
+                              </button>
+                            </Link>
+                            <div className="text-right">
+                              <p className="text-2xl font-bold text-white">
+                                ₹{order.totalAmount}
+                              </p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-lg text-gray-400">
-                  You have no previous orders.
-                </p>
+                <div className="bg-zinc-900/40 p-8 rounded-xl text-center border border-zinc-800/50">
+                  <ShoppingCart
+                    size={48}
+                    className="mx-auto mb-4 text-red-500/50"
+                  />
+                  <p className="text-xl text-gray-400">
+                    You haven't purchased any games yet.
+                  </p>
+                  <Link
+                    to="/"
+                    className="mt-6 inline-block bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors font-medium">
+                    Browse Games
+                  </Link>
+                </div>
               )}
             </div>
           )}

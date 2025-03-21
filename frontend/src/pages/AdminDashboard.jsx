@@ -249,11 +249,11 @@ const AdminDashboard = () => {
             <nav className="flex -mb-px">
               <button
                 onClick={() => setActiveTab("users")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 font-medium text-sm border-b-2 inline-flex items-center ${
                   activeTab === "users"
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } transition-colors duration-200 flex items-center`}
+                } transition-colors duration-200`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -273,11 +273,11 @@ const AdminDashboard = () => {
               </button>
               <button
                 onClick={() => setActiveTab("games")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 font-medium text-sm border-b-2 inline-flex items-center ${
                   activeTab === "games"
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } transition-colors duration-200 flex items-center`}
+                } transition-colors duration-200`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -297,11 +297,11 @@ const AdminDashboard = () => {
               </button>
               <button
                 onClick={() => setActiveTab("orders")}
-                className={`py-4 px-6 font-medium text-sm border-b-2 ${
+                className={`py-4 px-6 font-medium text-sm border-b-2 inline-flex items-center ${
                   activeTab === "orders"
                     ? "border-blue-500 text-blue-600"
                     : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-                } transition-colors duration-200 flex items-center`}
+                } transition-colors duration-200`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
