@@ -105,11 +105,36 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+//updating the games details
+const updateGame = async (req, res) => {
+  try {
+    const { gameId } = req.params;
+    const updates = req.body;
+    
+    const updatedGame = await Game.findOneAndUpdate(
+      { gameId },
+      updates,
+      { new: true }
+    );
+
+    if (!updatedGame) {
+      return res.status(404).json({ message: "Game not found" });
+    }
+
+    res.status(200).json(updatedGame);
+  } catch (error) {
+    console.error("Error updating game:", error);
+    res.status(500).json({ message: "Server error. Unable to update game." });
+  }
+};
+
+
 module.exports = {
   getAllUsers,
   deleteUser,
   getAllGames,
   deleteGame,
   updateGamePrice,
-  getAllOrders,  
+  getAllOrders, 
+  updateGame, 
 };

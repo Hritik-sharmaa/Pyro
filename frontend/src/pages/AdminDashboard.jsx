@@ -3,110 +3,131 @@ import axios from "axios"
 import "../styles/Common.css"
 
 const AdminDashboard = () => {
-  const [users, setUsers] = useState([])
-  const [games, setGames] = useState([])
-  const [orders, setOrders] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [activeTab, setActiveTab] = useState("users")
-  const [authenticated, setAuthenticated] = useState(false)
-  const [password, setPassword] = useState("")
-  const [showDeleteUserModal, setShowDeleteUserModal] = useState(null)
-  const [showDeleteGameModal, setShowDeleteGameModal] = useState(null)
-  const gamesPerPage = 10
+  const [users, setUsers] = useState([]);
+  const [games, setGames] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState("users");
+  const [authenticated, setAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(null);
+  const [showDeleteGameModal, setShowDeleteGameModal] = useState(null);
+  const [editingGame, setEditingGame] = useState(null);
+  const gamesPerPage = 10;
 
   useEffect(() => {
     if (authenticated) {
-      fetchUsers()
-      fetchGames()
-      fetchOrders()
+      fetchUsers();
+      fetchGames();
+      fetchOrders();
     }
-  }, [authenticated])
+  }, [authenticated]);
 
   const handleLogin = () => {
     if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
-      setAuthenticated(true)
+      setAuthenticated(true);
     } else {
-      alert("Incorrect password")
+      alert("Incorrect password");
     }
-  }
+  };
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`)
-      setUsers(response.data)
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`);
+      setUsers(response.data);
     } catch (error) {
-      console.error("Error fetching users:", error)
+      console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const fetchGames = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/games`)
-      setGames(response.data)
+      const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/games`);
+      setGames(response.data);
     } catch (error) {
-      console.error("Error fetching games:", error)
+      console.error("Error fetching games:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  const handleGameUpdate = async (gameId, updatedData) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/games/${gameId}`,
+        updatedData
+      );
+
+      if (response.data) {
+        setGames(prevGames => 
+          prevGames.map(game => 
+            game.gameId === gameId ? response.data : game
+          )
+        );
+        setEditingGame(null);
+        alert('Game updated successfully!');
+      }
+    } catch (error) {
+      console.error("Error updating game:", error);
+      alert("Failed to update game details. Please try again.");
+    }
+  };
 
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      console.log("Fetching orders..."); // Debug log
       const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`);
-      console.log("Orders received:", response.data); // Debug log
       setOrders(response.data);
     } catch (error) {
       console.error("Error fetching orders:", error);
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const removeUser = async (userId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${userId}`)
-      setUsers(users.filter((user) => user._id !== userId))
-      setShowDeleteUserModal(null)
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${userId}`);
+      setUsers(users.filter((user) => user._id !== userId));
+      setShowDeleteUserModal(null);
     } catch (error) {
-      console.error("Error removing user:", error)
+      console.error("Error removing user:", error);
     }
-  }
+  };
 
   const removeGame = async (gameId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/games/${gameId}`)
-      setGames(games.filter((game) => game.gameId !== gameId))
-      setShowDeleteGameModal(null)
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/admin/games/${gameId}`);
+      setGames(games.filter((game) => game.gameId !== gameId));
+      setShowDeleteGameModal(null);
     } catch (error) {
-      console.error("Error removing game:", error)
+      console.error("Error removing game:", error);
     }
-  }
+  };
 
   const updateGamePrice = async (gameId, updatedData) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/games/${gameId}/price`,
-        updatedData,
-      )
-      setGames(games.map((game) => (game.gameId === gameId ? response.data : game)))
+        updatedData
+      );
+      setGames(games.map((game) => (game.gameId === gameId ? response.data : game)));
     } catch (error) {
-      console.error("Error updating game price:", error)
+      console.error("Error updating game price:", error);
     }
-  }
+  };
 
-  const indexOfLastGame = currentPage * gamesPerPage
-  const indexOfFirstGame = indexOfLastGame - gamesPerPage
-  const currentGames = games.slice(indexOfFirstGame, indexOfLastGame)
-  const totalPages = Math.ceil(games.length / gamesPerPage)
+  const indexOfLastGame = currentPage * gamesPerPage;
+  const indexOfFirstGame = indexOfLastGame - gamesPerPage;
+  const currentGames = games.slice(indexOfFirstGame, indexOfLastGame);
+  const totalPages = Math.ceil(games.length / gamesPerPage);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber)
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   // Modal for user deletion confirmation
   const DeleteUserModal = ({ user }) => (
@@ -132,8 +153,7 @@ const AdminDashboard = () => {
         </div>
       </div>
     </div>
-  )
-
+  );
   // Modal for game deletion confirmation
   const DeleteGameModal = ({ game }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -156,7 +176,7 @@ const AdminDashboard = () => {
         </div>
       </div>
     </div>
-  )
+  );
 
   if (!authenticated) {
     return (
@@ -228,7 +248,7 @@ const AdminDashboard = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -410,7 +430,7 @@ const AdminDashboard = () => {
               <div>
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-2xl font-bold text-gray-800">Game Management</h2>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
                     {games.length} Games
                   </span>
                 </div>
@@ -419,21 +439,212 @@ const AdminDashboard = () => {
                   {currentGames.map((game) => (
                     <div
                       key={game.gameId}
-                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                      className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100"
                     >
                       <div className="p-6">
-                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-800 mb-1">{game.name}</h3>
-                            <p className="text-sm text-gray-500">Game ID: {game.gameId}</p>
-                          </div>
+                        {editingGame?.gameId === game.gameId ? (
+                          // Edit mode
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              handleGameUpdate(game.gameId, editingGame);
+                            }}
+                            className="animate-fadeIn"
+                          >
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input
+                                  type="text"
+                                  value={editingGame.name}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      name: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                                <textarea
+                                  value={editingGame.description}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      description: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                  rows={3}
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Genre</label>
+                                <input
+                                  type="text"
+                                  value={editingGame.genre}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      genre: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Developer</label>
+                                <input
+                                  type="text"
+                                  value={editingGame.developer}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      developer: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Publisher</label>
+                                <input
+                                  type="text"
+                                  value={editingGame.publisher}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      publisher: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Release Date</label>
+                                <input
+                                  type="date"
+                                  value={editingGame.releaseDate?.split("T")[0]}
+                                  onChange={(e) =>
+                                    setEditingGame({
+                                      ...editingGame,
+                                      releaseDate: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                              </div>
+                            </div>
+                            <div className="flex justify-end gap-2 mt-4">
+                              <button
+                                type="button"
+                                onClick={() => setEditingGame(null)}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                type="submit"
+                                className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
+                              >
+                                Save Changes
+                              </button>
+                            </div>
+                          </form>
+                        ) : (
+                          // View mode
+                          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            {/* Game Info Section */}
+                            <div className="lg:col-span-2">
+                              <div className="flex justify-between items-start mb-4">
+                                <div>
+                                  <h3 className="text-xl font-bold text-gray-800 flex items-center">
+                                    {game.name}
+                                    <span className="ml-2 px-2 py-0.5 bg-indigo-100 text-indigo-800 text-xs rounded-full">
+                                      {game.genre}
+                                    </span>
+                                  </h3>
+                                  <p className="text-sm text-gray-500 mt-1">Game ID: {game.gameId}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => setEditingGame({ ...game })}
+                                    className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors shadow-sm"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-4 w-4 mr-1"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                      />
+                                    </svg>
+                                    Edit
+                                  </button>
+                                  <button
+                                    onClick={() => setShowDeleteGameModal(game)}
+                                    className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors shadow-sm"
+                                  >
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-4 w-4 mr-1"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                      />
+                                    </svg>
+                                    Remove
+                                  </button>
+                                </div>
+                              </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full lg:w-auto">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
+                              <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                                <h4 className="text-sm font-medium text-gray-700 mb-2">Description</h4>
+                                <p className="text-sm text-gray-600">{game.description}</p>
+                              </div>
+
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                                  <h4 className="text-xs font-medium text-gray-500 uppercase">Developer</h4>
+                                  <p className="text-sm font-medium text-gray-800 mt-1">{game.developer}</p>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                                  <h4 className="text-xs font-medium text-gray-500 uppercase">Publisher</h4>
+                                  <p className="text-sm font-medium text-gray-800 mt-1">{game.publisher}</p>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                                  <h4 className="text-xs font-medium text-gray-500 uppercase">Release Date</h4>
+                                  <p className="text-sm font-medium text-gray-800 mt-1">
+                                    {new Date(game.releaseDate).toLocaleDateString()}
+                                  </p>
+                                </div>
+                                <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
+                                  <h4 className="text-xs font-medium text-gray-500 uppercase">Status</h4>
+                                  <p className="text-sm font-medium text-green-600 mt-1">Active</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Pricing Section */}
+                            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-5 rounded-xl shadow-sm">
+                              <h4 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="h-4 w-4 mr-1 text-gray-500"
+                                  className="h-5 w-5 mr-2 text-indigo-600"
                                   fill="none"
                                   viewBox="0 0 24 24"
                                   stroke="currentColor"
@@ -445,105 +656,85 @@ const AdminDashboard = () => {
                                     d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                   />
                                 </svg>
-                                Original Price
-                              </label>
-                              <input
-                                type="number"
-                                value={game.originalPrice || ""}
-                                onChange={(e) =>
-                                  updateGamePrice(game.gameId, {
-                                    originalPrice: Number(e.target.value) || 0,
-                                    discount: game.discount || 0,
-                                    discountedPrice:
-                                      (Number(e.target.value) || 0) -
-                                      ((Number(e.target.value) || 0) * (game.discount || 0)) / 100,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                              />
-                            </div>
+                                Pricing
+                              </h4>
 
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-4 w-4 mr-1 text-gray-500"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                                  />
-                                </svg>
-                                Discount (%)
-                              </label>
-                              <input
-                                type="number"
-                                value={game.discount || ""}
-                                onChange={(e) =>
-                                  updateGamePrice(game.gameId, {
-                                    originalPrice: game.originalPrice || 0,
-                                    discount: e.target.value || 0,
-                                    discountedPrice:
-                                      (game.originalPrice || 0) -
-                                      ((game.originalPrice || 0) * (Number(e.target.value) || 0)) / 100,
-                                  })
-                                }
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                              />
-                            </div>
+                              <div className="space-y-4">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Original Price (₹)
+                                  </label>
+                                  <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                      <span className="text-gray-500 sm:text-sm">₹</span>
+                                    </div>
+                                    <input
+                                      type="number"
+                                      value={game.originalPrice || ""}
+                                      onChange={(e) =>
+                                        updateGamePrice(game.gameId, {
+                                          originalPrice: Number(e.target.value) || 0,
+                                          discount: game.discount || 0,
+                                          discountedPrice:
+                                            (Number(e.target.value) || 0) -
+                                            ((Number(e.target.value) || 0) * (game.discount || 0)) / 100,
+                                        })
+                                      }
+                                      className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                    />
+                                  </div>
+                                </div>
 
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
-                                <svg
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  className="h-4 w-4 mr-1 text-gray-500"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"
-                                  />
-                                </svg>
-                                Final Price
-                              </label>
-                              <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 flex items-center">
-                                <span className="text-green-600 font-bold">
-                                  ₹{game.discountedPrice?.toLocaleString()}
-                                </span>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Discount (%)</label>
+                                  <div className="relative">
+                                    <input
+                                      type="number"
+                                      value={game.discount || ""}
+                                      onChange={(e) =>
+                                        updateGamePrice(game.gameId, {
+                                          originalPrice: game.originalPrice || 0,
+                                          discount: Number(e.target.value) || 0,
+                                          discountedPrice:
+                                            (game.originalPrice || 0) -
+                                            ((game.originalPrice || 0) * (Number(e.target.value) || 0)) / 100,
+                                        })
+                                      }
+                                      className="w-full pr-8 pl-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                      <span className="text-gray-500 sm:text-sm">%</span>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Final Price</label>
+                                  <div className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between">
+                                    <span className="text-green-600 font-bold text-lg">
+                                      ₹{game.discountedPrice?.toLocaleString()}
+                                    </span>
+                                    {game.discount > 0 && (
+                                      <span className="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                        {game.discount}% OFF
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {game.originalPrice > 0 && game.discount > 0 && (
+                                  <div className="text-sm text-gray-500 text-center">
+                                    <span className="line-through">₹{game.originalPrice?.toLocaleString()}</span>
+                                    {" → "}
+                                    <span className="text-green-600 font-medium">
+                                      ₹{game.discountedPrice?.toLocaleString()}
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
                           </div>
-
-                          <button
-                            onClick={() => setShowDeleteGameModal(game)}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="h-4 w-4 mr-1"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                            Remove
-                          </button>
-                        </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -556,7 +747,7 @@ const AdminDashboard = () => {
                       <button
                         onClick={() => paginate(Math.max(1, currentPage - 1))}
                         disabled={currentPage === 1}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
+                        className={`relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium ${
                           currentPage === 1 ? "text-gray-300 cursor-not-allowed" : "text-gray-500 hover:bg-gray-50"
                         }`}
                       >
@@ -585,13 +776,13 @@ const AdminDashboard = () => {
                               onClick={() => paginate(i + 1)}
                               className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
                                 currentPage === i + 1
-                                  ? "z-10 bg-blue-50 border-blue-500 text-blue-600"
+                                  ? "z-10 bg-indigo-50 border-indigo-500 text-indigo-600"
                                   : "bg-white border-gray-300 text-gray-500 hover:bg-gray-50"
                               }`}
                             >
                               {i + 1}
                             </button>
-                          )
+                          );
                         } else if (
                           (i === 1 && currentPage > 3) ||
                           (i === totalPages - 2 && currentPage < totalPages - 2)
@@ -603,15 +794,15 @@ const AdminDashboard = () => {
                             >
                               ...
                             </span>
-                          )
+                          );
                         }
-                        return null
+                        return null;
                       })}
 
                       <button
                         onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
                         disabled={currentPage === totalPages}
-                        className={`relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
+                        className={`relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium ${
                           currentPage === totalPages
                             ? "text-gray-300 cursor-not-allowed"
                             : "text-gray-500 hover:bg-gray-50"
@@ -677,7 +868,6 @@ const AdminDashboard = () => {
                               {new Date(order.createdAt).toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              {/* Fix: Access user data from populated userId */}
                               <div className="text-sm font-medium text-gray-900">
                                 {order.userId?.firstName} {order.userId?.lastName}
                               </div>
@@ -705,8 +895,8 @@ const AdminDashboard = () => {
                                     order.paymentMethod === "card"
                                       ? "bg-green-100 text-green-800"
                                       : order.paymentMethod === "gpay"
-                                      ? "bg-blue-100 text-blue-800"
-                                      : "bg-purple-100 text-purple-800"
+                                        ? "bg-blue-100 text-blue-800"
+                                        : "bg-purple-100 text-purple-800"
                                   }`}
                               >
                                 {order.paymentMethod.toUpperCase()}
@@ -730,7 +920,7 @@ const AdminDashboard = () => {
       {/* Delete Game Modal */}
       {showDeleteGameModal && <DeleteGameModal game={showDeleteGameModal} />}
     </div>
-  )
+  );
 }
-
 export default AdminDashboard
+

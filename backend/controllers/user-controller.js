@@ -12,4 +12,26 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-module.exports = { getUserProfile };
+// PUT /api/user/update-name
+const handleUserNameUpate = async (req,res) => {
+  try{
+    const { firstName, lastName } = req.body;
+  const userId = req.user.id;
+
+  const updatedUser = await User.findByIdAndUpdate(
+    userId,
+    { firstName, lastName },
+    { new: true }
+  ).select("-password"); 
+
+  res.json(updatedUser);
+
+  }catch(err){
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
+module.exports = { getUserProfile, handleUserNameUpate };

@@ -5,7 +5,8 @@ const {
   getAllGames,
   deleteGame,
   updateGamePrice,
-  getAllOrders,  // Add this line
+  getAllOrders,
+  updateGame  // Add this line
 } = require("../controllers/admin-controller");
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.put("/games/:gameId/price", updateGamePrice);
 
 //orders routes
 router.get("/orders", getAllOrders);
+router.put('/games/:gameId', updateGame);
 
 module.exports = router;
