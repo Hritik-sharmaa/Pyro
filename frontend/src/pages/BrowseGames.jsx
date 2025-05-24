@@ -38,7 +38,7 @@ const BrowseGames = () => {
         setGames(response.data.games)
         setTotalGames(response.data.totalGames)
         setLoading(false)
-      }, 3000)
+      }, 1500)
     } catch (err) {
       console.error("Error fetching browse games:", err)
       setLoading(false)

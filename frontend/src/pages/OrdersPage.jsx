@@ -1,5 +1,3 @@
-"use client"
-
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useAuthStore } from "../store/authStore"
@@ -21,7 +19,7 @@ const OrdersPage = () => {
   useEffect(() => {
     // Calculate total amount from cart items
     if (cartItems.length > 0) {
-      const total = cartItems.reduce((sum, item) => sum + item.price, 0)
+      const total = cartItems.reduce((sum, item) => sum + item.discountedPrice, 0)
       setTotalAmount(total)
     }
   }, [cartItems])

@@ -34,7 +34,7 @@ const Under500Games = () => {
         setGames(response.data.games)
         setTotalGames(response.data.totalGames)
         setLoading(false)
-      }, 3000)
+      }, 1500)
     } catch (err) {
       console.error("Error fetching the under-price-500 games", err)
       setLoading(false)

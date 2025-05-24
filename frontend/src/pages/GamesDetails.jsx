@@ -44,7 +44,7 @@ const GamesDetails = () => {
         // Ensure the loading screen is shown for at least 3 seconds
         setTimeout(() => {
           setLoading(false)
-        }, 3000)
+        }, 1500)
       } catch (err) {
         setError("Failed to load game details.")
         setLoading(false)

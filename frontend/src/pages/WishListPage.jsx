@@ -38,7 +38,7 @@ const WishlistPage = () => {
             setWishlist(response.data.games || []);
             setWishlistCount(response.data.games.length);
             setLoading(false);
-          }, 3000);
+          }, 1500);
         } catch (error) {
           console.error("Error fetching wishlist:", error);
           setLoading(false);

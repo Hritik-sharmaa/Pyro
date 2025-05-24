@@ -38,7 +38,7 @@ const GenreGamesPage = () => {
         setGames(response.data.games);
         setTotalGames(response.data.totalGames);
         setLoading(false);
-      }, 3000);
+      }, 1500);
     } catch (err) {
       console.error("Error fetching games by genre", err);
       setLoading(false);

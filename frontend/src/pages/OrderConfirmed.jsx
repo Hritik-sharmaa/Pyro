@@ -2,11 +2,30 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import { useEffect } from "react";
+import axios from "axios";
 
 const OrderConfirmed = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const cartItems = location.state?.cartItems || [];
+
+  useEffect(() => {
+    const sendOrderEmail = async () => {
+      try {
+        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/order/confirm`, {
+          email: location.state?.userEmail,
+          cartItems,
+        });
+      } catch (err) {
+        console.error("Error sending order email:", err);
+      }
+    };
+
+    if (cartItems.length && location.state?.userEmail) {
+      sendOrderEmail();
+    }
+  }, []);
 
   const orderDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",

@@ -1,6 +1,7 @@
 const Order = require("../model/order.js");
 const Cart = require("../model/cart.js");
 const mongoose = require("mongoose");
+const { sendOrderConfirmationEmail } = require("../nodemailer/email.js");
 
 const checkOut = async (req, res) => {
   try {
@@ -54,13 +55,13 @@ const getUserOrder = async (req, res) => {
       return res.status(400).json({ error: "UserId is required" });
     }
 
-    const orders = await Order.find({ userId }).populate({
-      path: "games",
-      select: "name poster discountedPrice" 
-    })
-    .lean() 
-    .exec();
-;
+    const orders = await Order.find({ userId })
+      .populate({
+        path: "games",
+        select: "name poster discountedPrice",
+      })
+      .lean()
+      .exec();
     // console.log("Orders with populated games:", JSON.stringify(orders, null, 2));
     // console.log("orders sent to frontend: ", orders);
     res.json(orders);
@@ -71,4 +72,22 @@ const getUserOrder = async (req, res) => {
   }
 };
 
-module.exports = { checkOut, getUserOrder };
+const confirmOrderEmail = async (req, res) => {
+  const { email, cartItems } = req.body;
+  console.log("Email:", email);
+
+  if (!email || !Array.isArray(cartItems)) {
+    return res.status(400).json({ message: "Invalid request payload" });
+  }
+
+  try {
+    await sendOrderConfirmationEmail(email, cartItems);
+    res.status(200).json({ message: "Order confirmation email sent" });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to send email", error: error.message });
+  }
+};
+
+module.exports = { checkOut, getUserOrder, confirmOrderEmail };

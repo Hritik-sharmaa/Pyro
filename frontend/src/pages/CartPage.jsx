@@ -22,7 +22,7 @@ const CartPage = () => {
     }
     setTimeout(() => {
       fetchCart()
-    }, 3000)
+    }, 1500)
   }, [userId])
 
   const fetchCart = async () => {
