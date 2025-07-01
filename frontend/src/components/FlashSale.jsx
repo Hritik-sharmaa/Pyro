@@ -13,8 +13,10 @@ const FlashSale = () => {
   useEffect(() => {
     const fetchFlashSaleGames = async () => {
       try {
-        const response = await axios.get("/api/flash-sale");
-        console.log("response: ", response.data)
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/flash-sale`
+        );
+        console.log("response: ", response.data);
 
         // Validate response format
         if (response.data && Array.isArray(response.data)) {

@@ -17,7 +17,7 @@ const GameSlider = () => {
 
   useEffect(() => {
     axios
-      .get("/api/carousel")
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/carousel`)
       .then((response) => {
         if (Array.isArray(response.data)) {
           setGames(response.data);
@@ -33,7 +33,7 @@ const GameSlider = () => {
       });
   }, []);
 
-   const handleAddToCart = async () => {
+  const handleAddToCart = async () => {
     if (!userId) {
       toast.error("You need to log in first!");
       return;
@@ -45,7 +45,7 @@ const GameSlider = () => {
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart/add/${userId}`,
         { gameId: game._id }
       );
@@ -88,9 +88,10 @@ const GameSlider = () => {
     }
 
     try {
-      const response = await axios.post(`/api/wishlist/add/${userId}`, {
-        gameId: game._id,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/wishlist/add/${userId}`,
+        { gameId: game._id }
+      );
 
       if (response.status === 200) {
         addToWishlist(game);
@@ -146,7 +147,7 @@ const GameSlider = () => {
                   </motion.p>
                 </motion.div>
               </Link>
-              
+
               <motion.div
                 className="absolute bottom-56 left-20 flex gap-4 z-20"
                 initial={{ y: 20, opacity: 0 }}

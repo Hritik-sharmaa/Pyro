@@ -12,7 +12,7 @@ const TopRatedGames = () => {
   useEffect(() => {
     // Fetch Top Rated Games
     axios
-      .get("/api/top-rated")
+      .get(`${import.meta.env.VITE_BACKEND_URL}/api/top-rated`)
       .then((response) => {
         setGames(response.data);
       })

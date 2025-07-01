@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import decode from "jwt-decode";
 
-const API_URL = "http://localhost:3000/api/auth";
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth`;
 
 export const useAuthStore = create((set) => ({
   user: null,
@@ -82,7 +82,7 @@ export const useAuthStore = create((set) => ({
     } else {
       set({ isAuthenticated: false, isCheckingAuth: false });
     }
-    set({ isLoading: false }); 
+    set({ isLoading: false });
   },
 
   login: async (email, password) => {

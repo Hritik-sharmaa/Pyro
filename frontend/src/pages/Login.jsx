@@ -9,7 +9,7 @@ import { MdOutlineAlternateEmail } from "react-icons/md";
 import { TbLockPassword } from "react-icons/tb";
 import { motion } from "motion/react";
 
-const GOOGLE_AUTH_URL = "http://localhost:3000/api/auth/google";
+const GOOGLE_AUTH_URL = `${import.meta.env.VITE_BACKEND_URL}/api/auth/google`;
 
 const Login = () => {
   const navigate = useNavigate();
