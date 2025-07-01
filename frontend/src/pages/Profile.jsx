@@ -385,7 +385,7 @@ const Profile = () => {
                       </div>
                       <Link
                         to="/forgot-password"
-                        className="font-medium text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 group-hover:gap-3 transition-all">
+                        className="font-medium text-red-400 hover:text-red-300 transition-colors flex items-center gap-2 group-hover:gap-3">
                         Reset your password
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
