@@ -444,7 +444,13 @@ const Profile = () => {
                           <div className="flex flex-col md:flex-row">
                             <div className="relative md:w-56 h-48 md:h-auto overflow-hidden">
                               <img
-                                src={game.poster || "/placeholder.svg"}
+                                src={
+                                  game.poster
+                                    ? `${import.meta.env.VITE_BACKEND_URL}${
+                                        game.poster
+                                      }`
+                                    : "/placeholder.svg"
+                                }
                                 alt={game.name}
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                               />

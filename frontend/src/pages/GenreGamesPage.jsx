@@ -135,7 +135,13 @@ const GenreGamesPage = () => {
                   <div className="md:w-1/2 relative overflow-hidden">
                     <Link to={`/games/${game._id}`} className="block">
                       <img
-                        src={game.poster || "/placeholder.svg"}
+                        src={
+                          game.poster
+                            ? `${import.meta.env.VITE_BACKEND_URL}${
+                                game.poster
+                              }`
+                            : "/placeholder.svg"
+                        }
                         alt={game.name}
                         className="w-full h-full transition-transform duration-500 group-hover:scale-110"
                       />

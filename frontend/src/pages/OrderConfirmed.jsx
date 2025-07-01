@@ -13,10 +13,13 @@ const OrderConfirmed = () => {
   useEffect(() => {
     const sendOrderEmail = async () => {
       try {
-        await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/order/confirm`, {
-          email: location.state?.userEmail,
-          cartItems,
-        });
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/order/confirm`,
+          {
+            email: location.state?.userEmail,
+            cartItems,
+          }
+        );
       } catch (err) {
         console.error("Error sending order email:", err);
       }
@@ -70,7 +73,15 @@ const OrderConfirmed = () => {
                 className="flex justify-between items-center border-b py-3">
                 <div className="flex items-center space-x-3">
                   <div className="w-[40%] h-full flex items-center justify-center">
-                    <img src={game.poster} alt="" className="rounded-2xl" />
+                    <img
+                      src={
+                        game.poster
+                          ? `${import.meta.env.VITE_BACKEND_URL}${game.poster}`
+                          : "/placeholder.svg"
+                      }
+                      alt=""
+                      className="rounded-2xl"
+                    />
                   </div>
                   <div>
                     <h3 className="font-semibold">{game.name}</h3>

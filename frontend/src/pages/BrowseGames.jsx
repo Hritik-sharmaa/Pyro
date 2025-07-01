@@ -190,7 +190,13 @@ const BrowseGames = () => {
                       className="block relative overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60 z-10"></div>
                       <img
-                        src={game.poster || "/placeholder.svg"}
+                        src={
+                          game.poster
+                            ? `${import.meta.env.VITE_BACKEND_URL}${
+                                game.poster
+                              }`
+                            : "/placeholder.svg"
+                        }
                         alt={game.name}
                         className="w-full h-56 object-cover transition-transform duration-700 group-hover:scale-110"
                       />
