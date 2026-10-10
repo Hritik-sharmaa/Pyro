@@ -1,12 +1,14 @@
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import slimReactIcons from "./vite-plugins/slim-react-icons.js";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "VITE_");
 
   return {
-    plugins: [react()],
+    // slimReactIcons keeps `vite build` under ~512 MB of memory (see the plugin).
+    plugins: [slimReactIcons(), react()],
     define: {
       // Base URL of the backend API.
       //  - unset / empty  -> same origin. This is what you want in production when
