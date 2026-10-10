@@ -1,0 +1,35 @@
+# Render "Blueprint": New + > Blueprint > pick this repo > fill the prompted values.
+# Deploys ONE web service that serves both the API and the built React app.
+services:
+  - type: web
+    name: pyro
+    runtime: node
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "20"
+      # auto-generated random secrets
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      # you must provide these in the Render dashboard
+      - key: MONGO_URI
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      # your service URL, e.g. https://pyro.onrender.com (set after first deploy)
+      - key: CLIENT_URL
+        sync: false
+      # email: RESEND_API_KEY works on every host; SMTP is blocked on Render free
+      - key: RESEND_API_KEY
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false

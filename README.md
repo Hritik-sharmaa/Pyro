@@ -40,7 +40,7 @@ A full-stack game store web application where users can browse, wishlist, and pu
 | Auth | JWT (cookies), Passport.js (Google OAuth 2.0), bcryptjs |
 | Email | Nodemailer, Resend |
 | Game Data | RAWG Video Games API |
-| Deployment | Frontend → Render, Backend → Vercel |
+| Deployment | Single service (Express serves the API **and** the built React app) — Render / any Docker host |
 
 ## Project Structure
 
@@ -48,12 +48,13 @@ A full-stack game store web application where users can browse, wishlist, and pu
 Pyro/
 ├── backend/
 │   ├── controllers/     # auth, games, cart, wishlist, orders, admin, user
-│   ├── middlewares/     # JWT auth middleware
+│   ├── middlewares/     # JWT auth + admin password guard
 │   ├── model/           # Mongoose schemas (User, Game, Cart, Wishlist, Order, Comment)
-│   ├── nodemailer/      # Email templates and sending logic
+│   ├── nodemailer/      # Email templates and sending logic (Resend or SMTP)
 │   ├── routes/          # Express route definitions
-│   ├── utils/           # JWT generation, passport config, token utils
-│   └── index.js         # Express app entry point
+│   ├── scripts/         # seed.js - import games / fix poster paths
+│   ├── utils/           # JWT generation, passport config, poster map
+│   └── index.js         # Express entry: API + posters + serves frontend/dist
 ├── frontend/
 │   └── src/
 │       ├── components/  # Navbar, Banner, GameSlider, FlashSale, etc.
@@ -61,66 +62,54 @@ Pyro/
 │       ├── store/       # Zustand stores (auth, cart, wishlist)
 │       ├── skeletonLoader/ # Skeleton loading states
 │       └── App.jsx      # Routes
-└── assets/
-    └── poster/          # Game poster images
+├── assets/
+│   └── poster/          # Game poster images (served at /assets/poster/*)
+├── Dockerfile           # builds UI + server into one image
+├── render.yaml          # Render blueprint
+├── .env.example         # backend environment template
+└── DEPLOYMENT.md        # step-by-step deployment guide
 ```
 
-## Getting Started
+## Deploying
+
+See **[DEPLOYMENT.md](DEPLOYMENT.md)** for the full guide (MongoDB Atlas, Render,
+Docker, email, Google login, troubleshooting). The short version:
+
+```bash
+npm ci && npm run build   # installs + builds the React app into frontend/dist
+npm start                 # one Node process serves API + UI on $PORT
+```
+
+## Local Development
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - MongoDB instance (local or Atlas)
-- RAWG API key ([rawg.io](https://rawg.io/apidocs))
-- Google OAuth credentials
+- RAWG API key ([rawg.io](https://rawg.io/apidocs)) - only to import games
+- Google OAuth credentials (optional)
 - Resend or SMTP credentials for email
 
-### Backend Setup
+### Backend
 
 ```bash
-cd Pyro
 npm install
+cp .env.example .env     # fill in MONGO_URI, JWT_SECRET, ... (see the file)
+npm run seed             # one-time: import ~200 games from RAWG
+npm run dev              # nodemon on http://localhost:3000
 ```
 
-Create a `.env` file in the root:
-
-```env
-MONGO_URI=your_mongodb_connection_string
-JWT_SECRET=your_jwt_secret
-SESSION_SECRET=your_session_secret
-
-RAWG_API_KEY=your_rawg_api_key
-BASE_URL=https://api.rawg.io/api/games
-
-GOOGLE_CLIENT_ID=your_google_client_id
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-
-CLIENT_URL=http://localhost:5173
-
-# Email (Resend or SMTP)
-RESEND_API_KEY=your_resend_api_key
-```
-
-```bash
-npm start    # runs with nodemon on port 3000
-```
-
-### Frontend Setup
+### Frontend
 
 ```bash
 cd frontend
 npm install
+npm run dev              # http://localhost:5173
 ```
 
-Create a `.env` file in `frontend/`:
-
-```env
-VITE_API_URL=http://localhost:3000
-```
-
-```bash
-npm run dev  # runs on http://localhost:5173
-```
+No frontend `.env` is needed locally: Vite proxies `/api` and `/assets` to
+`http://localhost:3000`. (`VITE_BACKEND_URL` is only for hosting the frontend
+separately - see [DEPLOYMENT.md](DEPLOYMENT.md).)
 
 ## API Endpoints
 

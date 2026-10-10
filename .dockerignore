@@ -1,0 +1,8 @@
+.git
+.vscode
+**/node_modules
+**/dist
+# Docker patterns are anchored to the context root, so use **/ to also catch frontend/.env
+**/.env*
+!**/.env.example
+**/*.log

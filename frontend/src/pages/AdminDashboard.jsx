@@ -24,11 +24,21 @@ const AdminDashboard = () => {
     }
   }, [authenticated]);
 
-  const handleLogin = () => {
-    if (password === import.meta.env.VITE_ADMIN_PASSWORD) {
+  // The password is verified by the server (ADMIN_PASSWORD env var), not in the
+  // browser. On success it is attached to every later admin request.
+  const handleLogin = async () => {
+    try {
+      await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/admin/users`, {
+        headers: { "x-admin-password": password },
+      });
+      axios.defaults.headers.common["x-admin-password"] = password;
       setAuthenticated(true);
-    } else {
-      alert("Incorrect password");
+    } catch (error) {
+      if (error.response?.status === 503) {
+        alert("Admin access is disabled: set ADMIN_PASSWORD on the server.");
+      } else {
+        alert("Incorrect password");
+      }
     }
   };
 

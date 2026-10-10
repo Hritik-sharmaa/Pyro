@@ -9,11 +9,10 @@ const { sendWelcomeEmail } = require("../nodemailer/email");
 const { sendPasswordResetEmail } = require("../nodemailer/email");
 const { sendResetSuccessEmail } = require("../nodemailer/email");
 const crypto = require("crypto");
+const { getClientUrl } = require("../utils/clientUrl");
 
 const register = async (req, res) => {
-  console.log("received req")
   const { firstName, lastName, email, password } = req.body;
-  console.log("register data: ", req.body)
   try {
     if (!firstName || !lastName || !email || !password) {
       return res.status(400).json({
@@ -61,22 +60,32 @@ const register = async (req, res) => {
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, //24 hours,
       googleId: null,
     });
-    console.log("User created: ", user); 
-
     await user.save();
 
-    generateJWTToken(res, user._id, user.firstName, user.email);
+    try {
+      await sendVerificationEmail(user.email, verificationToken);
+    } catch (emailError) {
+      // Don't leave an unverifiable account behind; the user can simply retry.
+      await User.deleteOne({ _id: user._id });
+      return res.status(502).json({
+        success: false,
+        message:
+          "We couldn't send the verification email. Please try again later.",
+        error: "Verification email failed",
+      });
+    }
 
-    await sendVerificationEmail(user.email, verificationToken);
+    generateJWTToken(res, user._id, user.firstName, user.email);
 
     res.status(201).json({
       success: true,
       user: {
         ...user._doc,
         password: undefined,
+        verificationToken: undefined,
+        verificationTokenExpiresAt: undefined,
       },
       message: "User registered successfully",
-      user,
     });
   } catch (error) {
     console.error("registrtion error: ",error);
@@ -183,7 +192,7 @@ const forgotPassword = async (req, res) => {
 
     await sendPasswordResetEmail(
       user.email,
-      `${process.env.CLIENT_URL}/reset-password/${resetPasswordToken}`
+      `${getClientUrl(req)}/reset-password/${resetPasswordToken}`
     );
 
     res.status(200).json({ message: "Password reset email sent successfully" });
@@ -215,6 +224,8 @@ const resetPassword = async (req, res) => {
     await user.save();
 
     await sendResetSuccessEmail(user.email);
+
+    res.status(200).json({ message: "Password reset successfully" });
   } catch (error) {
     console.error(error);
     res.status(400).json({ message: "Internal server error" });

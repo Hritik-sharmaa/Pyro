@@ -86,7 +86,7 @@ const posters = [
   },
   {
     id: 41494,
-    poster: "/assets/poster/cyberpunk.jpg",
+    poster: "/assets/poster/cyberpunk2077.jpg",
   },
   {
     id: 422,
@@ -234,7 +234,7 @@ const posters = [
   },
   {
     id: 9721,
-    poster: "/assets/poster/grraymod.jpg",
+    poster: "/assets/poster/garrymod.jpg",
   },
   {
     id: 4332,
@@ -282,7 +282,7 @@ const posters = [
   },
   {
     id: 10243,
-    poster: "/assets/poster/companyofherores2.jpg",
+    poster: "/assets/poster/companyofheroes2.jpg",
   },
   {
     id: 9882,
@@ -458,7 +458,7 @@ const posters = [
   },
   {
     id: 22509,
-    poster: "/assets/poster/minecraft.jpg",
+    poster: "/assets/poster/minecraft.webp",
   },
   {
     id: 480,
@@ -486,7 +486,7 @@ const posters = [
   },
   {
     id: 13554,
-    poster: "/assets/poster/fallout1997.jpg",
+    poster: "/assets/poster/fallout1997.avif",
   },
   {
     id: 5525,
@@ -530,7 +530,7 @@ const posters = [
   },
   {
     id: 1450,
-    poster: "/assets/poster/inside.jpg",
+    poster: "/assets/poster/insidew.jpg",
   },
   {
     id: 28201,
@@ -654,7 +654,7 @@ const posters = [
   },
   {
     id: 18613,
-    poster: "/assets/poster/counterstrikeconditionzer.jpg",
+    poster: "/assets/poster/counterstrikeconditionzero.jpg",
   },
   {
     id: 1256,
@@ -678,7 +678,7 @@ const posters = [
   },
   {
     id: 17959,
-    poster: "/assets/poster/oriandblindforest.jpg",
+    poster: "/assets/poster/oriandtheblindforest.jpg",
   },
   {
     id: 4599,
@@ -699,7 +699,7 @@ const posters = [
   {
     id: 4527,
     poster:
-      "/assets/poster/codmodernwarefare2.jpg/assets/poster/codmodernwarefare2.jpg",
+      "/assets/poster/codmodernwarefare2.jpg",
   },
   {
     id: 10297,

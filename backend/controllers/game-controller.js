@@ -437,6 +437,7 @@ const fetchGameDetails = async (req, res) => {
 
 module.exports = {
   fetchAndStoregame,
+  updatePosters,
   fetchTopRatedGames,
   fetchFlashSaleGames,
   fetchUnder500Games,

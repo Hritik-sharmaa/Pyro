@@ -8,7 +8,11 @@ const {
   getAllOrders,
   updateGame  // Add this line
 } = require("../controllers/admin-controller");
+const { requireAdmin } = require("../middlewares/admin-middleware");
 const router = express.Router();
+
+// every admin route requires the admin password
+router.use(requireAdmin);
 
 // users routes
 router.get("/users", getAllUsers);

@@ -1,7 +1,8 @@
+require("dotenv").config();
+const fs = require("fs");
 const express = require("express");
 const path = require("path");
 const { connectToDatabase } = require("./database/connectionDB");
-require("dotenv").config();
 const authRoutes = require("./routes/auth-route");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -31,16 +32,44 @@ const commentRoute = require("./routes/comment-routes");
 const adminRoute = require("./routes/admin-routes");
 const orderRoute = require("./routes/order-routes");
 
+// Fail fast with a readable message instead of a cryptic crash later.
+const missing = ["MONGO_URI", "JWT_SECRET"].filter((k) => !process.env[k]);
+if (missing.length) {
+  console.error(
+    `Missing required environment variable(s): ${missing.join(", ")}. ` +
+      "Set them in your hosting platform's dashboard (or in a local .env file)."
+  );
+  process.exit(1);
+}
+
 const app = express();
+const isProduction = process.env.NODE_ENV === "production";
+
+// Hosting platforms (Render, Railway, Fly, Heroku, ...) terminate TLS in a proxy.
+// Without this, req.protocol is "http" and Google OAuth builds a wrong callback URL.
+app.set("trust proxy", 1);
 
 app.use(express.json()); //middleware to parse json body
 
-const assetsPath = path.join(__dirname, "assets");
+// Game posters (JPG/WEBP/AVIF) live in <repo>/assets and are served at /assets/...
+const assetsPath = path.join(__dirname, "..", "assets");
 app.use("/assets", express.static(assetsPath));
+
+// Allowed browser origins. Not needed when the UI is served by this same server
+// (same origin), but required when the frontend is hosted separately.
+// CLIENT_URL = the frontend's URL; CORS_ORIGINS = optional extra comma-separated URLs.
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  ...(process.env.CORS_ORIGINS || "").split(","),
+  "http://localhost:5173",
+]
+  .map((o) => (o || "").trim().replace(/\/$/, ""))
+  .filter(Boolean);
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://pyro-frontend.onrender.com"],
+    origin: (origin, callback) =>
+      callback(null, !origin || allowedOrigins.includes(origin)),
     credentials: true,
   })
 );
@@ -48,9 +77,10 @@ app.use(
 app.use(cookieParser());
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || process.env.JWT_SECRET,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    cookie: { secure: isProduction, sameSite: "lax" },
   })
 );
 
@@ -61,7 +91,10 @@ app.use(passport.session());
 connectToDatabase();
 
 //fetch and store games
-//fetchAndStoregame();
+//fetchAndStoregame();  // seeding now lives in `npm run seed` (backend/scripts/seed.js)
+
+// health check for hosting platforms
+app.get("/api/health", (req, res) => res.status(200).json({ status: "ok" }));
 
 //middlewares
 app.use("/api/auth", authRoutes);
@@ -103,6 +136,22 @@ app.use("/api/user", userRoute);
 //admin routes
 app.use("/api/admin", adminRoute);
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000");
+// Serve the built React app (frontend/dist) from this same server, so one
+// deployment hosts both UI and API. Skipped when the frontend isn't built
+// (e.g. local dev, where Vite serves the UI on :5173).
+const clientDist = path.join(__dirname, "..", "frontend", "dist");
+if (fs.existsSync(path.join(clientDist, "index.html"))) {
+  app.use(express.static(clientDist));
+  // SPA fallback: any non-API, non-file GET returns index.html so that
+  // client-side routes like /games/123 survive a refresh.
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api/") || path.extname(req.path)) return next();
+    res.sendFile(path.join(clientDist, "index.html"));
+  });
+}
+
+// Platforms inject the port to listen on via PORT.
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });

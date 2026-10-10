@@ -46,16 +46,16 @@ const Register = () => {
       return;
     }
 
-    await register(firstName, lastName, email, password);
-    navigate("/verify-email"); //redirect to verify email page
-
-    //adding toast to showcase error getting error from authController file
-    if (data.error) {
-      toast.error(data.error);
-    } else {
-      setData({ firstName: "", lastName: "", email: "", password: "" });
-      toast.success("Registration successfull, Please Verify!");
+    try {
+      await register(firstName, lastName, email, password);
+    } catch (err) {
+      toast.error(err.message || "Registration failed");
+      return;
     }
+
+    setData({ firstName: "", lastName: "", email: "", password: "" });
+    toast.success("Registration successfull, Please Verify!");
+    navigate("/verify-email"); //redirect to verify email page
   };
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-950 bg font-mono tracking-tighter bg">

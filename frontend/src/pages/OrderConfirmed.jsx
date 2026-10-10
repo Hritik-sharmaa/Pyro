@@ -14,7 +14,7 @@ const OrderConfirmed = () => {
     const sendOrderEmail = async () => {
       try {
         await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/api/order/confirm`,
+          `${import.meta.env.VITE_BACKEND_URL}/api/orders/confirm`,
           {
             email: location.state?.userEmail,
             cartItems,

@@ -1,3 +1,7 @@
-
 node_modules
+dist
+*.log
+
+# secrets: never commit real env files, but do commit the templates
 .env*
+!.env.example
