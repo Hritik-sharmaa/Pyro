@@ -2,6 +2,7 @@ require("dotenv").config();
 const fs = require("fs");
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
 const { connectToDatabase } = require("./database/connectionDB");
 const authRoutes = require("./routes/auth-route");
 const cookieParser = require("cookie-parser");
@@ -93,8 +94,14 @@ connectToDatabase();
 //fetch and store games
 //fetchAndStoregame();  // seeding now lives in `npm run seed` (backend/scripts/seed.js)
 
-// health check for hosting platforms
-app.get("/api/health", (req, res) => res.status(200).json({ status: "ok" }));
+// health check for hosting platforms. Always 200 while the server is up (so a
+// brief database outage doesn't get the service killed); "db" reports the link.
+app.get("/api/health", (req, res) =>
+  res.status(200).json({
+    status: "ok",
+    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+  })
+);
 
 //middlewares
 app.use("/api/auth", authRoutes);

@@ -25,7 +25,7 @@ const postersOnly = process.argv.includes("--posters-only");
     process.exit(1);
   }
 
-  await connectToDatabase();
+  await connectToDatabase({ maxAttempts: 1 });
   if (mongoose.connection.readyState !== 1) {
     console.error("Could not connect to MongoDB; aborting.");
     process.exit(1);
